@@ -11,14 +11,14 @@ module.exports.getCards = (req, res) => {
 
 //Post создание карточки
 
-module.exports.createCards = (req, res) => {
+module.exports.createCard = (req, res) => {
   Cards.create({ name, link, owner })
     .then((card) => res.status(200).send({ data: card }))
     .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
 };
 
 //Delete удаление
-module.exports.deleteCards = (req, res) => {
+module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndDelete(req.params.cardId)
     .then((card) => res.status(200).send({ data: card }))
     .catch(() => res.status(500).send({ message: "Произошла ошибка" }));

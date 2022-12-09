@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const users = require("../models/user");
 
 // GET /users — возвращает всех пользователей
 module.exports.getUsers = router.get("/users", (req, res) => {

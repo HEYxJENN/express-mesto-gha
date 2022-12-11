@@ -7,9 +7,9 @@ const {
   dislikeCard,
 } = require("../controllers/cards");
 
-router.get("/", getCards);
+router.get("/cards", getCards);
 
-router.post("/", createCard);
+router.post("/cards", createCard);
 
 router.put("/", likeCard);
 

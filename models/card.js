@@ -21,11 +21,11 @@ const cardSchema = new mongoose.Schema({
   owner: {
     type: String,
     required: true,
-    default: [],
   },
   likes: {
     type: Array,
     required: true,
+    default: [],
   },
   createdAt: {
     type: Date,

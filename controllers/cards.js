@@ -12,9 +12,15 @@ module.exports.getCards = (req, res) => {
 //Post создание карточки
 
 module.exports.createCard = (req, res) => {
-  Cards.create({ name, link, owner })
+  const { name, link } = req.body;
+  const ownerId = req.user._id;
+  Cards.create({ name, link, owner: ownerId })
     .then((card) => res.status(200).send({ data: card }))
-    .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+    .catch(() =>
+      res.status(500).send({
+        message: `${req.body} Произошла ошибка`,
+      })
+    );
 };
 
 //Delete удаление

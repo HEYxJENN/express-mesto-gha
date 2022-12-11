@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-// const cors = require("cors");
+const cors = require("cors");
 const mongoose = require("mongoose");
 const userRouter = require("./routes/users");
 const cardsRouter = require("./routes/cards");
@@ -15,7 +15,7 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
   // useUnifiedTopology: true,
 });
 
-// app.use(cors());
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -30,5 +30,6 @@ app.use("/", userRouter);
 app.use("/", cardsRouter);
 
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`App listening on port ${PORT}`);
 });

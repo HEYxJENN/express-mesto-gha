@@ -16,7 +16,10 @@ module.exports.getUser = (req, res) => {
     Users
       .findById(req.params.userId)
       .then((user) => res.send({ data: user }))
-      .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
+      .catch((err) =>
+     { if (err.status === 404) {res.status(404).send({message:'Пользователь не найден'})}
+      else {res.status(500).send({ message: "Произошла ошибка" }) }
+})
   };
 
 
@@ -26,8 +29,13 @@ module.exports.createUser = (req, res) => {
     const { name, about, avatar } = req.body;
     Users.create({ name, about, avatar })
       .then((user) => res.send({ data: user }))
-      .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
-  };
+      .catch((err) => {
+        if (err.name==="ValidationError") {res.status(400).send({message:'Не проходит валидацию'})}
+        else {res.status(500).send({ message: "Произошла ошибка" }) }
+       })
+};
+
+
 
 
 //апдейтЮзер
@@ -40,7 +48,7 @@ module.exports.updateUser = (req, res) => {
       if (err.name==="Validation Error")
       { return res.status(400).send({ message: "Неверные данные" })
       }
-       res.status(500).send({ message:`${req.body}, "Произошла ошибка" `})
+       res.status(500).send({ message: "Произошла ошибка" })
       })
   };
 

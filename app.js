@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 
 app.use("/", userRouter);
 app.use("/", cardsRouter);
+app.use("/*", (req,res) => {res.status(404).json({message:"Данный ресурс не найден"})})
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

@@ -25,7 +25,7 @@ module.exports.getUser = (req, res) => {
 module.exports.createUser = (req, res) => {
     const { name, about, avatar } = req.body;
     Users.create({ name, about, avatar })
-      .then((user) => res.send({ data: user }))
+      .then((user) => res.send({ data: user }, { new: true }))
       .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
   };
 
@@ -35,7 +35,7 @@ module.exports.createUser = (req, res) => {
 module.exports.updateUser = (req, res) => {
     const { name, about } = req.body;
     Users.findByIdAndUpdate(req.user._id,{ name, about})
-      .then((user) => res.send({ data: user }))
+      .then((user) => res.send({ data: user },{ new: true }))
       .catch((err) => {
       if (err.name==="Validation Error")
       { return res.status(400).send({ message: "Неверные данные" })
@@ -49,6 +49,6 @@ module.exports.updateUser = (req, res) => {
 module.exports.updateUseravatar = (req, res) => {
     const {avatar } = req.body;
     Users.findByIdAndUpdate(req.user._id , {avatar} )
-      .then((user) => res.send({ data: user }))
+      .then((user) => res.send({ data: user },{ new: true }))
       .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
   };

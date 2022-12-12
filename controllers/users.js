@@ -13,11 +13,9 @@ module.exports.getUsers = (req, res) => {
 // GET /users/:userId - возвращает пользователя по _id
 
 module.exports.getUser = (req, res) => {
-    const id = req.body
-
     Users
-      .findById({id})
-      .then((users) => res.send({ data: users }))
+      .findById(req.params.userId)
+      .then((user) => res.send({ data: user }))
       .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
   };
 
@@ -42,7 +40,7 @@ module.exports.updateUser = (req, res) => {
       if (err.name==="Validation Error")
       { return res.status(400).send({ message: "Неверные данные" })
       }
-       res.status(500).send({ message: "Произошла ошибка" })
+       res.status(500).send({ message:`${req.body}, "Произошла ошибка" `})
       });
   };
 
@@ -50,7 +48,7 @@ module.exports.updateUser = (req, res) => {
 
 module.exports.updateUseravatar = (req, res) => {
     const {avatar } = req.body;
-    Users.findByIdAndUpdate({ name, about, avatar })
+    Users.findByIdAndUpdate(req.user._id , {avatar} )
       .then((user) => res.send({ data: user }))
       .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
   };

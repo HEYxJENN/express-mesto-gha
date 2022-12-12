@@ -15,7 +15,7 @@ module.exports.getCards = (req, res) => {
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
-  Cards.create({ name, link, owner: ownerId })
+  Cards.create({ name, link, owner: ownerId },{new:true})
     .then((card) => res.status(200).send({ data: card }))
     .catch(() => res.status(500).send({
       message: `${req.body} Произошла ошибка`,
@@ -24,7 +24,7 @@ module.exports.createCard = (req, res) => {
 
 // Delete удаление
 module.exports.deleteCard = (req, res) => {
-  Cards.findByIdAndDelete(req.params.cardId)
+  Cards.findByIdAndDelete(req.params.cardId,{new:true})
     .then((card) => res.status(200).send({ data: card }))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };

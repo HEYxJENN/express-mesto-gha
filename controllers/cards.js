@@ -15,10 +15,10 @@ module.exports.getCards = (req, res) => {
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
-  Cards.create({ name, link, owner: ownerId },{new:true})
+  Cards.create({ name, link, owner: ownerId })
     .then((card) => res.status(200).send({ data: card }))
     .catch(() => res.status(500).send({
-      message: `${req.body} Произошла ошибка`,
+      message: " Произошла ошибка",
     }));
 };
 

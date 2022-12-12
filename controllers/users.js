@@ -1,5 +1,6 @@
 // const router = require("express").Router();
 const Users = require("../models/user");
+const NotFound = require ("../errors/NotFound")
 
 // GET /users — возвращает всех пользователей
 module.exports.getUsers = (req, res) => {
@@ -17,8 +18,8 @@ module.exports.getUser = (req, res) => {
       .findById(req.params.userId)
       .then((user) => res.send({ data: user }))
       .catch((err) =>
-     { if (err.status === 404) {res.status(404).send({message:'Пользователь не найден'})}
-      else {res.status(500).send({ message: "Произошла ошибка" }) }
+     { if (err.name === "CastError") {res.status(400).send({message:'Некорректный id'})}
+      else {res.status(500).send({ message: "Произошла ошибка", err }) }
 })
   };
 
@@ -30,7 +31,7 @@ module.exports.createUser = (req, res) => {
     Users.create({ name, about, avatar })
       .then((user) => res.send({ data: user }))
       .catch((err) => {
-        if (err.name==="ValidationError") {res.status(400).send({message:'Не проходит валидацию'})}
+        if (err.name==="ValidationError") {res.status(400).send({message:'Неверный формат данных'})}
         else {res.status(500).send({ message: "Произошла ошибка" }) }
        })
 };
@@ -43,10 +44,11 @@ module.exports.createUser = (req, res) => {
 module.exports.updateUser = (req, res) => {
     const { name, about } = req.body;
     Users.findByIdAndUpdate(req.user._id,{ name, about},{new:true})
+      .orFail (() => {new NotFound('Неверные данные')})
       .then((user) => res.send({ data: user }))
       .catch((err) => {
-      if (err.name==="Validation Error")
-      { return res.status(400).send({ message: "Неверные данные" })
+      if (err.name==="ValidationError")
+      { return res.status(400).send({ message: "Неверный формат данных" })
       }
        res.status(500).send({ message: "Произошла ошибка" })
       })

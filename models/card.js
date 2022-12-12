@@ -5,9 +5,9 @@ const mongoose = require("mongoose");
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
+    required: true,
     minLenght: 2,
     maxLength: 30,
-    required: true,
   },
   link: {
     type: String,

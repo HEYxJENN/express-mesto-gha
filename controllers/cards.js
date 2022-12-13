@@ -30,14 +30,14 @@ module.exports.createCard = (req, res) => {
 // Delete удаление
 module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndDelete(req.params.cardId,{new:true})
-  .orFail(()=> new NotFound('Айди не найден') )
+  .orFail(new NotFound('Айди не найден') )
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err.name="CastError") {
-        res.status (400).send({message:'Карточка не найдена'})}
-      else if (err.status===404)
-      { return res.status(404).send({ message: "Несуществующий айди" })
+      if (err.status===404)
+      { return res.status(err.status).send({ message: err.message })
       }
+      else if (err.name="CastError") {
+        res.status (400).send({message:'Некорректный айди',err})}
       else {
        res.status(500).send({ message: "Произошла ошибка" }) }
     })
@@ -53,12 +53,21 @@ module.exports.likeCard = (req, res) => {
 )
 .orFail(()=> new ValidationError('Переданы некорректные данные ') )
 .then((card) => res.status(200).send({ data: card }))
+// .catch((err) => {
+//   if (err.name="CastError") {
+//     res.status (400).send({message:'Карточка не найдена'})}
+//     else if (err.name==="BadRequest")
+//       { return res.status(404).send({ message: "Несуществующий айди" })
+//       }  else {
+//    res.status(500).send({ message: "Произошла ошибка" }) }
+// })
 .catch((err) => {
-  if (err.name="CastError") {
-    res.status (400).send({message:'Карточка не найдена'})}
-    else if (err.name==="BadRequest")
-      { return res.status(400).send({ message: "Несуществующий айди" })
-      }  else {
+  if (err.status===404)
+  { return res.status(err.status).send({ message: err.message })
+  }
+  else if (err.name="CastError") {
+    res.status (400).send({message:'Некорректный айди',err})}
+  else {
    res.status(500).send({ message: "Произошла ошибка" }) }
 })
 }
@@ -71,12 +80,21 @@ module.exports.dislikeCard = (req, res) =>{ Cards.findByIdAndUpdate(
 )
 .orFail(()=> new ValidationError('Переданы некорректные данные ') )
 .then((card) => res.status(200).send({ data: card }))
+// .catch((err) => {
+//   if (err.name="CastError") {
+//     res.status (400).send({message:'Карточка не найдена'})}
+//    else if (err.name==="ValidationError")
+//   { return res.status(400).send({ message: "Некорректный тип данных" })
+//   } else {
+//    res.status(500).send({ message: "Произошла ошибка" }) }
+// })
 .catch((err) => {
-  if (err.name="CastError") {
-    res.status (400).send({message:'Карточка не найдена'})}
-   else if (err.name==="ValidationError")
-  { return res.status(400).send({ message: "Некорректный тип данных" })
-  } else {
+  if (err.status===404)
+  { return res.status(err.status).send({ message: err.message })
+  }
+  else if (err.name="CastError") {
+    res.status (400).send({message:'Некорректный айди',err})}
+  else {
    res.status(500).send({ message: "Произошла ошибка" }) }
 })
 }

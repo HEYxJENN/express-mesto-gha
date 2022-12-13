@@ -16,6 +16,7 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
     Users
       .findById(req.params.userId)
+      .orFail(()=> new NotFound('Айди не найден') )
       .then((user) => res.send({ data: user }))
       .catch((err) => {
       if (err.name === "CastError") {res.status(400).send({message:'Некорректный id'})}

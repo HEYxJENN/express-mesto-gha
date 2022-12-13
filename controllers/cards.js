@@ -43,12 +43,14 @@ module.exports.deleteCard = (req, res) => {
 
 // likedel
 
-module.exports.likeCard = (req, res) => {Cards.findByIdAndUpdate(
+module.exports.likeCard = (req, res) => {
+  Cards.findByIdAndUpdate(
   req.params.cardId,
-  { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+  { $addToSet: { likes: req.user._id } },
   { new: true },
 )
-.orFail(()=> new ValidationError('Переданы некорректные данные ') )
+.then((card) => res.status(200).send({ data: card }))
+// .orFail(()=> new ValidationError('Переданы некорректные данные ') )
 .catch((err) => {
   if (err.name==="ValidationError")
   { return res.status(404).send({ message: "Не найдено" })
@@ -60,10 +62,11 @@ module.exports.likeCard = (req, res) => {Cards.findByIdAndUpdate(
 
 module.exports.dislikeCard = (req, res) =>{ Cards.findByIdAndUpdate(
   req.params.cardId,
-  { $pull: { likes: req.user._id } }, // убрать _id из массива
+  { $pull: { likes: req.user._id } },
   { new: true },
 )
-.orFail(()=> new ValidationError('Переданы некорректные данные ') )
+.then((card) => res.status(200).send({ data: card }))
+// .orFail(()=> new ValidationError('Переданы некорректные данные ') )
 .catch((err) => {
   if (err.name==="ValidationError")
   { return res.status(404).send({ message: "Не найдено" })

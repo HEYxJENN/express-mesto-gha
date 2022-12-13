@@ -1,6 +1,8 @@
 // const router = require("express").Router();
 const Users = require("../models/user");
 const NotFound = require ("../errors/NotFound")
+const ValidationError = require ('../errors/ValidationError')
+
 
 // GET /users — возвращает всех пользователей
 module.exports.getUsers = (req, res) => {
@@ -29,7 +31,6 @@ module.exports.getUser = (req, res) => {
 // POST /users — создаёт пользователя
 
 module.exports.createUser = (req, res) => {
-
     const { name, about, avatar } = req.body;
     Users.create({ name, about, avatar })
       .then((user) => res.send({ data: user }))
@@ -46,7 +47,7 @@ module.exports.createUser = (req, res) => {
 
 module.exports.updateUser = (req, res) => {
     const { name, about } = req.body;
-    Users.findByIdAndUpdate(req.user._id,{ name, about},{new:true})
+    Users.findByIdAndUpdate(req.user._id,{name, about},{new:true})
       .orFail (() => {new NotFound('Неверные данные')})
       .then((user) => res.send({ data: user }))
       .catch((err) => {

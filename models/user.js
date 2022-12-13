@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
+// const validator = require("validator");
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    minlength: 2,
     maxlength: 30,
-    minlength:2,
   },
   about: {
     type: String,
@@ -19,5 +20,5 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-const Users= mongoose.model("user", userSchema);
-module.exports = Users;
+module.exports = mongoose.model("user", userSchema);
+

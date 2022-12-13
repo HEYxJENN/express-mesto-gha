@@ -35,9 +35,10 @@ module.exports.deleteCard = (req, res) => {
     .catch((err) => {
       if (err.name="CastError") {
         res.status (400).send({message:'Карточка не найдена'})}
-       else if (err.name==="ValidationError")
-      { return res.status(400).send({ message: "Некорректный тип данных" })
-      } else {
+      else if (err.name==="BadRequest")
+      { return res.status(404).send({ message: "Несуществующий айди" })
+      }
+      else {
        res.status(500).send({ message: "Произошла ошибка" }) }
     })
     }
@@ -55,9 +56,9 @@ module.exports.likeCard = (req, res) => {
 .catch((err) => {
   if (err.name="CastError") {
     res.status (400).send({message:'Карточка не найдена'})}
-   else if (err.name==="ValidationError")
-  { return res.status(400).send({ message: "Некорректный тип данных" })
-  } else {
+    else if (err.name==="BadRequest")
+      { return res.status(400).send({ message: "Несуществующий айди" })
+      }  else {
    res.status(500).send({ message: "Произошла ошибка" }) }
 })
 }

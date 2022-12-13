@@ -30,16 +30,17 @@ module.exports.createCard = (req, res) => {
 // Delete удаление
 module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndDelete(req.params.cardId,{new:true})
+  .orFail(()=> new NotFound('Айди не найден') )
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.name="CastError") {
-        res.status (400).send({message:'Карточка не найдена'})
-      } else if (err.name="BadRequest")  {
-        res.status (400).send({message:'Карточка не найдена'}) }
-      else
-      res.status(500).send({ message: 'Произошла ошибка' })
-    });
-};
+        res.status (404).send({message:'Карточка не найдена'})}
+       else if (err.name==="ValidationError")
+      { return res.status(400).send({ message: "Некорректный тип данных" })
+      } else {
+       res.status(500).send({ message: "Произошла ошибка" }) }
+    })
+    }
 
 // likedel
 
@@ -49,14 +50,16 @@ module.exports.likeCard = (req, res) => {
   { $addToSet: { likes: req.user._id } },
   { new: true },
 )
+.orFail(()=> new ValidationError('Переданы некорректные данные ') )
 .then((card) => res.status(200).send({ data: card }))
-// .orFail(()=> new ValidationError('Переданы некорректные данные ') )
 .catch((err) => {
-  if (err.name==="ValidationError")
-  { return res.status(404).send({ message: "Не найдено" })
+  if (err.name="CastError") {
+    res.status (404).send({message:'Карточка не найдена'})}
+   else if (err.name==="ValidationError")
+  { return res.status(400).send({ message: "Некорректный тип данных" })
   } else {
    res.status(500).send({ message: "Произошла ошибка" }) }
-  })
+})
 }
 
 
@@ -65,14 +68,16 @@ module.exports.dislikeCard = (req, res) =>{ Cards.findByIdAndUpdate(
   { $pull: { likes: req.user._id } },
   { new: true },
 )
+.orFail(()=> new ValidationError('Переданы некорректные данные ') )
 .then((card) => res.status(200).send({ data: card }))
-// .orFail(()=> new ValidationError('Переданы некорректные данные ') )
 .catch((err) => {
-  if (err.name==="ValidationError")
-  { return res.status(404).send({ message: "Не найдено" })
+  if (err.name="CastError") {
+    res.status (404).send({message:'Карточка не найдена'})}
+   else if (err.name==="ValidationError")
+  { return res.status(400).send({ message: "Некорректный тип данных" })
   } else {
    res.status(500).send({ message: "Произошла ошибка" }) }
-  })
+})
 }
 
 

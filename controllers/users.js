@@ -18,7 +18,8 @@ module.exports.getUser = (req, res) => {
       .findById(req.params.userId)
       .then((user) => res.send({ data: user }))
       .catch((err) =>
-     { if (err.name === "CastError") {res.status(400).send({message:'Некорректный id'})}
+     { if  (err.name === "CastError") {res.status(400).send({message:'Некорректный id'})}
+      if (err.name === "NotFound") {res.status(404).send({message:'Пользователь не найден'})}
       else {res.status(500).send({ message: "Произошла ошибка", err }) }
 })
   };
@@ -43,14 +44,14 @@ module.exports.createUser = (req, res) => {
 
 module.exports.updateUser = (req, res) => {
     const { name, about } = req.body;
-    Users.findByIdAndUpdate(req.user._id,{ name, about},{new:true})
+    Users.findByIdAndUpdate(req.user._id,{ name, about},{new:true},{runValidators:true})
       .orFail (() => {new NotFound('Неверные данные')})
       .then((user) => res.send({ data: user }))
       .catch((err) => {
       if (err.name==="ValidationError")
       { return res.status(400).send({ message: "Неверный формат данных" })
-      }
-       res.status(500).send({ message: "Произошла ошибка" })
+      } else {
+       res.status(500).send({ message: "Произошла ошибка" }) }
       })
   };
 
@@ -58,7 +59,12 @@ module.exports.updateUser = (req, res) => {
 
 module.exports.updateUseravatar = (req, res) => {
     const {avatar } = req.body;
-    Users.findByIdAndUpdate(req.user._id , {avatar},{new:true} )
+    Users.findByIdAndUpdate(req.user._id , {avatar},{new:true},{runValidators:true})
       .then((user) => res.send({ data: user }))
-      .catch(() => res.status(500).send({ message: "Произошла ошибка" }));
-  };
+      .catch((err) => {
+        if (err.name==="ValidationError")
+        { return res.status(400).send({ message: "Неверный формат данных" })
+        } else {
+         res.status(500).send({ message: "Произошла ошибка" }) }
+        })
+    };

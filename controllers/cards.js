@@ -16,7 +16,7 @@ module.exports.getCards = (req, res) => {
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
-  Cards.create({ name, link, owner: ownerId })
+  Cards.create({ name, link, owner: ownerId },{runValidators: true})
     .then((card) =>
     res.status(200).send({ data: card }))
     .catch((err) => {

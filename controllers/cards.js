@@ -34,7 +34,7 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.name="CastError") {
-        res.status (404).send({message:'Карточка не найдена'})}
+        res.status (400).send({message:'Карточка не найдена'})}
        else if (err.name==="ValidationError")
       { return res.status(400).send({ message: "Некорректный тип данных" })
       } else {
@@ -54,7 +54,7 @@ module.exports.likeCard = (req, res) => {
 .then((card) => res.status(200).send({ data: card }))
 .catch((err) => {
   if (err.name="CastError") {
-    res.status (404).send({message:'Карточка не найдена'})}
+    res.status (400).send({message:'Карточка не найдена'})}
    else if (err.name==="ValidationError")
   { return res.status(400).send({ message: "Некорректный тип данных" })
   } else {
@@ -72,7 +72,7 @@ module.exports.dislikeCard = (req, res) =>{ Cards.findByIdAndUpdate(
 .then((card) => res.status(200).send({ data: card }))
 .catch((err) => {
   if (err.name="CastError") {
-    res.status (404).send({message:'Карточка не найдена'})}
+    res.status (400).send({message:'Карточка не найдена'})}
    else if (err.name==="ValidationError")
   { return res.status(400).send({ message: "Некорректный тип данных" })
   } else {

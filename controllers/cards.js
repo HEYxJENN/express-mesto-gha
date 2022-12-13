@@ -19,7 +19,7 @@ module.exports.createCard = (req, res) => {
   Cards.create({ name, link, owner: ownerId },{runValidators:true})
     .then((card) =>
     res.status(200).send({ data: card }))
-    .catch(() => {
+    .catch((err) => {
     if (err.name='ValidationError') res.status(400).send ({message:'переданы некорректные данные'});
     else {
     res.status(500).send({
@@ -31,7 +31,7 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndDelete(req.params.cardId,{new:true})
     .then((card) => res.status(200).send({ data: card }))
-    .catch(() => {
+    .catch((err) => {
       if (err.name="CastError") {
         res.status (400).send({message:'Карточка не найдена'})
       } else

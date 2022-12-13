@@ -28,6 +28,7 @@ module.exports.getUser = (req, res) => {
 // POST /users — создаёт пользователя
 
 module.exports.createUser = (req, res) => {
+
     const { name, about, avatar } = req.body;
     Users.create({ name, about, avatar })
       .then((user) => res.send({ data: user }))

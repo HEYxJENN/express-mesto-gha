@@ -34,8 +34,11 @@ module.exports.deleteCard = (req, res) => {
     .catch((err) => {
       if (err.name="CastError") {
         res.status (400).send({message:'Карточка не найдена'})
-      } else
-      res.status(500).send({ message: 'Произошла ошибка' })});
+      } else if (err.name="BadRequest")  {
+        res.status (400).send({message:'Карточка не найдена'}) }
+      else
+      res.status(500).send({ message: 'Произошла ошибка' })
+    });
 };
 
 // likedel

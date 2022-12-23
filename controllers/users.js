@@ -40,7 +40,10 @@ module.exports.createUser = (req, res) => {
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
   Users.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (!user) { res.status(notfound).send({ message: fourHf }); } res.send({ data: user });
+      res.send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(wrong).send({ message: fourH });
@@ -55,8 +58,10 @@ module.exports.updateUser = (req, res) => {
 module.exports.updateUseravatar = (req, res) => {
   const { avatar } = req.body;
   Users.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
+    .then((user) => {
+      if (!user) { res.status(notfound).send({ message: fourHf }); } res.send({ data: user });
+      res.send({ data: user });
+    }).catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(wrong).send({ message: fourH });
       }

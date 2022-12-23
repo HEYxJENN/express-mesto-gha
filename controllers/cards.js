@@ -1,14 +1,5 @@
-/* eslint-disable no-constant-condition */
-/* eslint-disable no-cond-assign */
-/* eslint-disable no-param-reassign */
-/* eslint-disable consistent-return */
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable import/extensions */
-/* eslint-disable no-unused-vars */
-const Cards = require('../models/card.js');
-const NotFound = require('../errors/NotFound.js');
-const ValidationError = require('../errors/ValidationError');
-
+const Cards = require('../models/card');
+const NotFound = require('../errors/NotFound');
 // Get получаем все карты
 
 module.exports.getCards = (req, res) => {
@@ -25,7 +16,7 @@ module.exports.createCard = (req, res) => {
   Cards.create({ name, link, owner: ownerId })
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err.name = 'ValidationError') res.status(400).send({ message: 'переданы некорректные данные' });
+      if (err.name === 'ValidationError') res.status(400).send({ message: 'переданы некорректные данные' });
       else {
         res.status(500).send({
           message: ' Произошла ошибка',
@@ -37,13 +28,13 @@ module.exports.createCard = (req, res) => {
 // Delete удаление
 module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndDelete(req.params.cardId, { new: true })
-    .orFail(new NotFound('Айди не найден'))
+    .orFail(new NotFound())
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.status === 404) {
-        return res.status(err.status).send({ message: err.message });
+        res.status(err.status).send({ message: err.message });
       }
-      if (err.name = 'CastError') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Некорректный айди', err });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
@@ -59,14 +50,15 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => new ValidationError('Переданы некорректные данные '))
+    .orFail(() => new NotFound('Переданы некорректные данные'))
     .then((card) => res.status(200).send({ data: card }))
+    .orFail(new NotFound('Пользователь не найден'))
     .catch((err) => {
-      if (err.kind === 'ObjectId') {
-        return res.status(400).send({ message: err.message });
+      if (err.message === 'Пользователь не найден') {
+        res.status(404).send({ message: err.message });
       }
-      if (err.name = 'CastError') {
-        res.status(404).send({ message: 'Некорректный айди' });
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Некорректный айди' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
       }
@@ -79,14 +71,15 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => new ValidationError('Переданы некорректные данные '))
+    .orFail(() => new NotFound('Пользователь не найден'))
     .then((card) => res.status(200).send({ data: card }))
+    .orFail(new NotFound('Пользователь не найден'))
     .catch((err) => {
-      if (err.kind === 'ObjectId') {
-        return res.status(400).send({ message: err.message });
+      if (err.message === 'Пользователь не найден') {
+        res.status(404).send({ message: err.message });
       }
-      if (err.name = 'CastError') {
-        res.status(404).send({ message: 'Некорректный айди' });
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Некорректный айди' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
       }

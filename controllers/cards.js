@@ -1,11 +1,15 @@
 const Cards = require('../models/card');
 const NotFound = require('../errors/NotFound');
+const {
+  fiveH, fourH, fourHf, error, wrong, notfound,
+} = require('./constants/constants');
+
 // Get получаем все карты
 
 module.exports.getCards = (req, res) => {
   Cards.find({})
     .then((cards) => res.status(200).send({ data: cards }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(error).send({ message: fiveH }));
 };
 
 // Post создание карточки
@@ -16,10 +20,10 @@ module.exports.createCard = (req, res) => {
   Cards.create({ name, link, owner: ownerId })
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') res.status(400).send({ message: 'переданы некорректные данные' });
+      if (err.name === 'ValidationError') res.status(wrong).send({ message: fourH });
       else {
-        res.status(500).send({
-          message: ' Произошла ошибка',
+        res.status(error).send({
+          message: fiveH,
         });
       }
     });
@@ -31,13 +35,13 @@ module.exports.deleteCard = (req, res) => {
     .orFail(new NotFound())
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err.status === 404) {
-        res.status(err.status).send({ message: 'позльзователь не найден' });
+      if (err.status === notfound) {
+        res.status(err.status).send({ message: fourHf });
       }
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Некорректный айди', err });
+        res.status(wrong).send({ message: fourH });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(error).send({ message: fiveH });
       }
     });
 };
@@ -54,12 +58,12 @@ module.exports.likeCard = (req, res) => {
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.message === 'Пользователь не найден') {
-        res.status(404).send({ message: err.message });
+        res.status(notfound).send({ message: fourHf });
       }
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Некорректный айди' });
+        res.status(wrong).send({ message: fourH });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(error).send({ message: fiveH });
       }
     });
 };
@@ -74,12 +78,12 @@ module.exports.dislikeCard = (req, res) => {
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.message === 'Пользователь не найден') {
-        res.status(404).send({ message: err.message });
+        res.status(notfound).send({ fourHf });
       }
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Некорректный айди' });
+        res.status(wrong).send({ message: fourH });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(error).send({ message: fiveH });
       }
     });
 };

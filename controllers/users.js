@@ -1,12 +1,14 @@
 const Users = require('../models/user');
-// const NotFound = require('../errors/NotFound');
+const {
+  fiveH, fourH, fourHf, error, wrong, notfound,
+} = require('./constants/constants');
 
 // GET /users — возвращает всех пользователей
 module.exports.getUsers = (req, res) => {
   Users
     .find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(500).send({ message: fiveH }));
 };
 
 // GET /users/:userId - возвращает пользователя по _id
@@ -14,9 +16,11 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   Users
     .findById(req.params.userId)
-    .then((user) => { if (!user) { res.status(404).send({ message: 'ID не найден' }); } res.send({ data: user }); })
+    .then((user) => {
+      if (!user) { res.status(notfound).send({ message: fourHf }); } res.send({ data: user });
+    })
     .catch((err) => {
-      if (err.name === 'CastError') { res.status(400).send({ message: 'Некорректный id' }); } else { res.status(500).send({ message: 'Произошла ошибка' }); }
+      if (err.name === 'CastError') { res.status(wrong).send({ message: fourH }); } else { res.status(error).send({ message: fiveH }); }
     });
 };
 
@@ -27,7 +31,7 @@ module.exports.createUser = (req, res) => {
   Users.create({ name, about, avatar })
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') { res.status(400).send({ message: 'Неверный формат данных' }); } else { res.status(500).send({ message: 'Произошла ошибка' }); }
+      if (err.name === 'ValidationError') { res.status(wrong).send({ message: fourH }); } else { res.status(err).send({ message: fiveH }); }
     });
 };
 
@@ -39,9 +43,9 @@ module.exports.updateUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Неверный формат данных' });
+        res.status(wrong).send({ message: fourH });
       } else {
-        res.status(500).send({ message: 'Произошла ошибка' });
+        res.status(error).send({ message: fiveH });
       }
     });
 };
@@ -54,8 +58,8 @@ module.exports.updateUseravatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Неверный формат данных' });
+        res.status(wrong).send({ message: fourH });
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
+      res.status(error).send({ message: fiveH });
     });
 };

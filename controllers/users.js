@@ -14,8 +14,7 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   Users
     .findById(req.params.userId)
-    // .orFail(() => new NotFound('Айди не найден'))
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => { if (!user) { res.status(404).send('Айди не найден'); } res.send({ data: user }); })
     .catch((err) => {
       if (err.name === 'CastError') { res.status(400).send({ message: 'Некорректный id' }); } else if (err.name === 'NotFound') { res.status(404).send({ message: 'Пользователь не найден' }); } else { res.status(500).send({ message: 'Произошла ошибка' }); }
     });
@@ -26,7 +25,7 @@ module.exports.getUser = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   Users.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') { res.status(400).send({ message: 'Неверный формат данных' }); } else { res.status(500).send({ message: 'Произошла ошибка' }); }
     });
@@ -37,8 +36,6 @@ module.exports.createUser = (req, res) => {
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
   Users.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-  //
-    // .orFail(() => new NotFound())
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {

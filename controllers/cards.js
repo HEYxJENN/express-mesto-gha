@@ -50,9 +50,8 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => new NotFound('Переданы некорректные данные'))
-    .then((card) => res.status(200).send({ data: card }))
     .orFail(new NotFound('Пользователь не найден'))
+    .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.message === 'Пользователь не найден') {
         res.status(404).send({ message: err.message });
@@ -71,9 +70,8 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => new NotFound('Пользователь не найден'))
-    .then((card) => res.status(200).send({ data: card }))
     .orFail(new NotFound('Пользователь не найден'))
+    .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.message === 'Пользователь не найден') {
         res.status(404).send({ message: err.message });

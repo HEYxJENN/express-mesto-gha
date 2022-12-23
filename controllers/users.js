@@ -1,5 +1,5 @@
 const Users = require('../models/user');
-const NotFound = require('../errors/NotFound');
+// const NotFound = require('../errors/NotFound');
 
 // GET /users — возвращает всех пользователей
 module.exports.getUsers = (req, res) => {
@@ -14,8 +14,8 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   Users
     .findById(req.params.userId)
-    .orFail(() => new NotFound('Айди не найден'))
-    .then((user) => res.send({ data: user }))
+    // .orFail(() => new NotFound('Айди не найден'))
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') { res.status(400).send({ message: 'Некорректный id' }); } else if (err.name === 'NotFound') { res.status(404).send({ message: 'Пользователь не найден' }); } else { res.status(500).send({ message: 'Произошла ошибка' }); }
     });
@@ -38,7 +38,7 @@ module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
   Users.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
   //
-    .orFail(() => new NotFound())
+    // .orFail(() => new NotFound())
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {

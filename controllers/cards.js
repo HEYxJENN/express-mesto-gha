@@ -36,7 +36,7 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.status === notfound) {
-        res.status(err.status).send({ message: fourHf });
+        res.status(notfound).send({ message: fourHf });
       }
       if (err.name === 'CastError') {
         res.status(wrong).send({ message: fourH });
@@ -78,7 +78,7 @@ module.exports.dislikeCard = (req, res) => {
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.message === 'Пользователь не найден') {
-        res.status(notfound).send({ fourHf });
+        res.status(notfound).send(fourHf);
       }
       if (err.name === 'CastError') {
         res.status(wrong).send({ message: fourH });

@@ -14,9 +14,9 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUser = (req, res) => {
   Users
     .findById(req.params.userId)
-    .then((user) => { if (!user) { res.status(404).send('Айди не найден'); } res.send({ data: user }); })
+    .then((user) => { if (!user) { res.status(404).send({ message: 'ID не найден' }); } res.send({ data: user }); })
     .catch((err) => {
-      if (err.name === 'CastError') { res.status(400).send({ message: 'Некорректный id' }); } else if (err.name === 'NotFound') { res.status(404).send({ message: 'Пользователь не найден' }); } else { res.status(500).send({ message: 'Произошла ошибка' }); }
+      if (err.name === 'CastError') { res.status(400).send({ message: 'Некорректный id' }); } else { res.status(500).send({ message: 'Произошла ошибка' }); }
     });
 };
 

@@ -32,7 +32,7 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.status === 404) {
-        res.status(err.status).send({ message: err.message });
+        res.status(err.status).send({ message: 'позльзователь не найден' });
       }
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Некорректный айди', err });

@@ -8,6 +8,7 @@ const {
 
 module.exports.getCards = (req, res) => {
   Cards.find({})
+    .populate(['owner', 'likes'])
     .then((cards) => res.status(200).send({ data: cards }))
     .catch(() => res.status(error).send({ message: fiveH }));
 };
@@ -18,7 +19,7 @@ module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
   Cards.create({ name, link, owner: ownerId })
-    .then((card) => res.status(200).send({ data: card }))
+    .then((card) => res.status(200).send({ data: card, ownerId }))
     .catch((err) => {
       if (err.name === 'ValidationError') res.status(wrong).send({ message: fourH });
       else {

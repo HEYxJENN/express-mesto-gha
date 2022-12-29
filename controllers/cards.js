@@ -8,7 +8,7 @@ const {
   BAD_REQUEST_MESSAGE,
   NOT_FOUND_MESSAGE,
   INTERNAL_SERVER_MESSAGE,
-} = require('./constants/constants');
+} = require('../constants/constants');
 
 // Get получаем все карты
 

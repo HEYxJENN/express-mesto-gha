@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const Users = require('../models/user');
 const {
   CREATED,
@@ -7,7 +9,31 @@ const {
   BAD_REQUEST_MESSAGE,
   NOT_FOUND_MESSAGE,
   INTERNAL_SERVER_MESSAGE,
-} = require('./constants/constants');
+} = require('../constants/constants');
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  Users.findUserByCredentials({ email, password })
+    .then((user) => {
+      res.send({
+        token: jwt.sign({ _id: user._id }, { expiresIn: '7d' }),
+      });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: 'bad', err });
+    });
+};
+
+module.exports.getMe = (req, res, next) => {
+  Users.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
+      }
+      res.send({ data: user });
+    })
+    .catch(next);
+};
 
 // GET /users — возвращает всех пользователей
 module.exports.getUsers = (req, res) => {
@@ -44,18 +70,20 @@ module.exports.getUser = (req, res) => {
 // POST /users — создаёт пользователя
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  Users.create({ name, about, avatar })
-    .then((user) => res.status(CREATED).send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      } else {
-        res
-          .status(INTERNAL_SERVER_ERROR)
-          .send({ message: INTERNAL_SERVER_MESSAGE });
-      }
-    });
+  const { name, about, avatar, email, password } = req.body;
+  bcrypt.hash(password, 10).then((hash) => {
+    Users.create({ name, about, avatar, email, password: hash })
+      .then((user) => res.status(CREATED).send({ data: user }))
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+        } else {
+          res
+            .status(INTERNAL_SERVER_ERROR)
+            .send({ message: INTERNAL_SERVER_MESSAGE });
+        }
+      });
+  });
 };
 
 // апдейтЮзер

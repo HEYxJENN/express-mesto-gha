@@ -23,7 +23,7 @@ module.exports.login = (req, res) => {
       res.cookie('secureCookie', token, {
         secure: false,
         httpOnly: true,
-        expires: new Date(Date.now() + 900000),
+        expires: new Date(Date.now() + 9000000),
         sameSite: 'Lax',
       });
 
@@ -37,6 +37,7 @@ module.exports.login = (req, res) => {
 };
 
 module.exports.getMe = (req, res, next) => {
+  console.log(req.user._id);
   Users.findById(req.user._id)
     .then((user) => {
       if (!user) {

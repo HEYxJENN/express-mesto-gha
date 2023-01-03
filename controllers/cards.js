@@ -45,7 +45,13 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndDelete(req.params.cardId, { new: true })
     .orFail(new NotFound())
-    .then((card) => res.status(OK).send({ data: card }))
+    .then((card) => {
+      if (req.owner._id === req.user._id) {
+        res.status(OK).send({ data: card });
+      } else {
+        throw Error('Вы не являетесь владельцем данной карточки');
+      }
+    })
     .catch((err) => {
       if (err.status === 404) {
         res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });

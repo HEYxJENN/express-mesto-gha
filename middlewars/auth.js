@@ -8,20 +8,28 @@ const extractBearerToken = (header) => header.replace('Bearer ', '');
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
-
+  // кука из реквеста
+  const { secureCookie } = req.cookies;
   if (!authorization || !authorization.startsWith('Bearer ')) {
     handleAuthError(res);
+    return;
   }
 
   const token = extractBearerToken(authorization);
-  let payload;
 
+  // сравниваем токены
+  if (secureCookie !== token) {
+    handleAuthError(res);
+    return;
+  }
+
+  let payload;
   try {
     payload = jwt.verify(token, 'super-strong-secret');
   } catch (err) {
     handleAuthError(res);
+    return;
   }
-
   req.user = payload; // записываем пейлоуд в объект запроса
 
   next(); // пропускаем запрос дальше

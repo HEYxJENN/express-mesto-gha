@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const userRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const auth = require('./middlewars/auth');
@@ -12,6 +13,7 @@ const app = express();
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
 app.use(cors());
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

@@ -16,10 +16,19 @@ module.exports.login = (req, res) => {
 
   return Users.findUserByCredentials(email, password)
     .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
+        expiresIn: '7d',
+      });
+
+      res.cookie('secureCookie', token, {
+        secure: false,
+        httpOnly: true,
+        expires: new Date(Date.now() + 900000),
+        sameSite: 'Lax',
+      });
+
       res.send({
-        token: jwt.sign({ _id: user._id }, 'super-strong-secret', {
-          expiresIn: '7d',
-        }),
+        token,
       });
     })
     .catch((err) => {

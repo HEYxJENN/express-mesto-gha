@@ -13,14 +13,17 @@ const {
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
-  Users.findUserByCredentials({ email, password })
+
+  return Users.findUserByCredentials(email, password)
     .then((user) => {
       res.send({
-        token: jwt.sign({ _id: user._id }, { expiresIn: '7d' }),
+        token: jwt.sign({ _id: user._id }, 'super-strong-secret', {
+          expiresIn: '7d',
+        }),
       });
     })
     .catch((err) => {
-      res.status(401).send({ message: 'bad', err });
+      res.status(401).send({ message: err.message });
     });
 };
 

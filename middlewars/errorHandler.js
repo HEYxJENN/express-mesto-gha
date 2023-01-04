@@ -1,6 +1,7 @@
 const { isCelebrateError } = require('celebrate');
 
 module.exports = (err, req, res, next) => {
+  // console.log('middleware', isCelebrateError(err));
   const { statusCode = 500, message = 'Ошибка Сервера' } = err;
   if (isCelebrateError(err)) {
     res.status = statusCode.json(err);

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+// const { isCelebrateError } = require('celebrate');
 const Users = require('../models/user');
 const ValidationError = require('../errors/ValidationError');
 const {
@@ -103,7 +104,7 @@ module.exports.getUser = (req, res) => {
 //   });
 // }
 
-module.exports.createUser = async (req, res) => {
+module.exports.createUser = async (req, res, next) => {
   try {
     const { name, about, avatar, email, password } = req.body;
     if (!password) {
@@ -121,29 +122,14 @@ module.exports.createUser = async (req, res) => {
     user.password = undefined;
     res.status(CREATED).send({ data: user });
   } catch (err) {
-    console.log(err);
     if (err.name === 'ValidationError') {
       res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      // {
-      // error: 'Bad Request',
-      // statusCode: 400,
-      // validation: {
-      //   body: {
-      //     source: 'body',
-      //     keys: ['name'],
-      // },
-      // },
-      // }
-      // );
     } else {
-      res.status(INTERNAL_SERVER_ERROR).send({
-        message: INTERNAL_SERVER_MESSAGE,
-        error: 'Internal Error',
-        statusCode: INTERNAL_SERVER_ERROR,
-      });
+      next(err);
     }
   }
 };
+// };
 
 // апдейтЮзер
 

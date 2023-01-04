@@ -21,7 +21,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post(
   '/signin',
-  userRouter,
   celebrate({
     [Segments.BODY]: Joi.object().keys({
       name: Joi.string().min(2).max(30).required(),
@@ -29,11 +28,11 @@ app.post(
       password: Joi.string().required().min(1),
       about: Joi.string().min(2).max(30),
     }),
-  })
+  }),
+  userRouter
 );
 app.post(
   '/signup',
-  userRouter,
   celebrate({
     [Segments.BODY]: Joi.object().keys({
       name: Joi.string().min(2).max(30).required(),
@@ -41,7 +40,8 @@ app.post(
       password: Joi.string().required().min(1),
       about: Joi.string().min(2).max(30),
     }),
-  })
+  }),
+  userRouter
 );
 app.use(auth);
 app.use('/', userRouter);

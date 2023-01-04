@@ -37,7 +37,6 @@ module.exports.login = (req, res) => {
 };
 
 module.exports.getMe = (req, res, next) => {
-  console.log(req.user._id);
   Users.findById(req.user._id)
     .then((user) => {
       if (!user) {
@@ -82,21 +81,52 @@ module.exports.getUser = (req, res) => {
 
 // POST /users — создаёт пользователя
 
-module.exports.createUser = (req, res) => {
-  const { name, about, avatar, email, password } = req.body;
-  bcrypt.hash(password, 10).then((hash) => {
-    Users.create({ name, about, avatar, email, password: hash })
-      .then((user) => res.status(CREATED).send({ data: user }))
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-        } else {
-          res
-            .status(INTERNAL_SERVER_ERROR)
-            .send({ message: INTERNAL_SERVER_MESSAGE });
-        }
-      });
-  });
+// module.exports.createUser2 = async (req, res) => {
+//   const { name, about, avatar, email, password } = req.body;
+//   if (!password) {
+//     throw Error('Необходимо ввести пароль');
+//   }
+
+//   bcrypt.hash(password, 10).then((hash) => {
+//     Users.create({ name, about, avatar, email, password: hash })
+//       .then((user) => res.status(CREATED).send({ data: user }))
+//       .catch((err) => {
+//         if (err.name === 'ValidationError') {
+//           res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+//         } else {
+//           res
+//             .status(INTERNAL_SERVER_ERROR)
+//             .send({ message: INTERNAL_SERVER_MESSAGE });
+//         }
+//       });
+//   });
+// }
+
+module.exports.createUser = async (req, res) => {
+  try {
+    const { name, about, avatar, email, password } = req.body;
+    if (!password) {
+      throw Error('Необходимо ввести пароль');
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+    const user = await Users.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    });
+    res.status(CREATED).send({ data: user });
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+    } else {
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: INTERNAL_SERVER_MESSAGE });
+    }
+  }
 };
 
 // апдейтЮзер

@@ -26,6 +26,7 @@ module.exports.getCards = (req, res) => {
 // Post создание карточки
 
 module.exports.createCard = (req, res) => {
+  // req.name.joi()
   const { name, link } = req.body;
   const ownerId = req.user._id;
   Cards.create({ name, link, owner: ownerId })

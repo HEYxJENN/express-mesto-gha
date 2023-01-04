@@ -118,11 +118,11 @@ module.exports.createUser = async (req, res) => {
       email,
       password: hash,
     });
-    user.password = null;
+    user.password = undefined;
     res.status(CREATED).send({ data: user });
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(err.status).send({ message: err.message });
+      res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
     } else {
       res
         .status(INTERNAL_SERVER_ERROR)

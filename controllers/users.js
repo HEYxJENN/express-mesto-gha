@@ -118,7 +118,7 @@ module.exports.createUser = async (req, res) => {
       email,
       password: hash,
     });
-    user.password = undefined;
+    user.password = null;
     res.status(CREATED).send({ data: user });
   } catch (err) {
     if (err.name === 'ValidationError') {

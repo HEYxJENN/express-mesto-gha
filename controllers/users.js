@@ -123,17 +123,18 @@ module.exports.createUser = async (req, res) => {
   } catch (err) {
     console.log(err);
     if (err.name === 'ValidationError') {
-      res.status(BAD_REQUEST_ERROR).send({
-        message: BAD_REQUEST_MESSAGE,
-        error: 'Bad Request',
-        statusCode: 400,
-        validation: {
-          body: {
-            source: 'body',
-            keys: ['name'],
-          },
-        },
-      });
+      res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      // {
+      // error: 'Bad Request',
+      // statusCode: 400,
+      // validation: {
+      //   body: {
+      //     source: 'body',
+      //     keys: ['name'],
+      // },
+      // },
+      // }
+      // );
     } else {
       res.status(INTERNAL_SERVER_ERROR).send({
         message: INTERNAL_SERVER_MESSAGE,

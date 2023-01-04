@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Users = require('../models/user');
+const ValidationError = require('../errors/ValidationError');
 const {
   CREATED,
   NOT_FOUND_ERROR,
@@ -106,7 +107,7 @@ module.exports.createUser = async (req, res) => {
   try {
     const { name, about, avatar, email, password } = req.body;
     if (!password) {
-      throw Error('Необходимо ввести пароль');
+      throw ValidationError('Необходимо ввести пароль');
     }
 
     const hash = await bcrypt.hash(password, 10);
@@ -120,7 +121,7 @@ module.exports.createUser = async (req, res) => {
     res.status(CREATED).send({ data: user });
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      res.status(err.status).send({ message: err.message });
     } else {
       res
         .status(INTERNAL_SERVER_ERROR)

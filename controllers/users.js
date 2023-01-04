@@ -128,18 +128,9 @@ module.exports.createUser = async (req, res) => {
         error: 'Bad Request',
         statusCode: 400,
         validation: {
-          source: {
-            type: 'string',
-            const: 'body',
-          },
-          keys: {
-            type: 'array',
-            items: [
-              {
-                type: 'string',
-                const: 'name',
-              },
-            ],
+          body: {
+            source: 'body',
+            keys: ['name'],
           },
         },
       });

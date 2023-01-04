@@ -107,7 +107,7 @@ module.exports.createUser = async (req, res) => {
   try {
     const { name, about, avatar, email, password } = req.body;
     if (!password) {
-      throw ValidationError('Необходимо ввести пароль');
+      throw new ValidationError('Необходимо ввести пароль');
     }
 
     const hash = await bcrypt.hash(password, 10);
@@ -121,12 +121,13 @@ module.exports.createUser = async (req, res) => {
     user.password = undefined;
     res.status(CREATED).send({ data: user });
   } catch (err) {
+    console.log(err);
     if (err.name === 'ValidationError') {
-      res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      res.status(err.code).send({ message: BAD_REQUEST_MESSAGE });
     } else {
       res
         .status(INTERNAL_SERVER_ERROR)
-        .send({ message: INTERNAL_SERVER_MESSAGE });
+        .send({ message: INTERNAL_SERVER_MESSAGE, err });
     }
   }
 };

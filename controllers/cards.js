@@ -43,46 +43,22 @@ module.exports.createCard = (req, res) => {
     });
 };
 
-// Delete удаление 2222222
-module.exports.deleteCard2 = (req, res) => {
-  Cards.findOneAndDelete({ _id: req.params.cardId, owner: req.user._id })
-    .orFail(new NotFound('Card не найден'))
-    .then((card) => {
-      if (card.owner.toString() === req.user._id) {
-        res.status(OK).send({ data: card });
-      } else {
-        throw new ForbidddenError('Нет Доступа');
-      }
-    })
-    .catch((err) => {
-      if (err.status === 404) {
-        res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
-      } else if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      } else {
-        res
-          .status(INTERNAL_SERVER_ERROR)
-          .send({ message: INTERNAL_SERVER_MESSAGE });
-      }
-    });
-};
-
 // Delete удаление
 module.exports.deleteCard = async (req, res) => {
   try {
     const card = await Cards.findById(req.params.cardId);
-
     if (!card) {
       throw new NotFound('Card не найден');
     }
-
     if (card.owner.toString() !== req.user._id) {
       throw new ForbidddenError('Нет Доступа');
     }
-
     await Cards.findByIdAndDelete(req.params.cardId);
     res.status(OK).send({ data: card });
   } catch (err) {
+    if (err.status === 403) {
+      res.status(err.status).send({ message: err.message });
+    }
     if (err.status === 404) {
       res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
     } else if (err.name === 'CastError') {

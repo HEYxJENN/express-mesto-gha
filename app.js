@@ -9,7 +9,7 @@ const cardsRouter = require('./routes/cards');
 const auth = require('./middlewars/auth');
 const errorHandler = require('./middlewars/errorHandler');
 
-const URLregex = / ^https?: /;
+const URLregex = /^http/;
 const { PORT = 3000 } = process.env;
 
 const app = express();

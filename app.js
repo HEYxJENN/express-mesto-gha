@@ -23,10 +23,10 @@ app.post(
   '/signin',
   celebrate({
     [Segments.BODY]: Joi.object().keys({
-      name: Joi.string().min(2).max(30),
+      // name: Joi.string().min(2).max(30),
       email: Joi.string().required().email(),
       password: Joi.string().required().min(1),
-      about: Joi.string().min(2).max(30),
+      // about: Joi.string().min(2).max(30),
     }),
   }),
   userRouter
@@ -35,10 +35,16 @@ app.post(
   '/signup',
   celebrate({
     [Segments.BODY]: Joi.object().keys({
-      name: Joi.string().min(2).max(30),
+      name: Joi.string().min(2).max(30).default('Жак-Ив-Кусто'),
       email: Joi.string().required().email(),
       password: Joi.string().required().min(1),
-      about: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30).default('Исследователь'),
+      avatar: Joi.string()
+        .min(2)
+        .max(30)
+        .default(
+          'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png'
+        ),
     }),
   }),
   userRouter
@@ -51,7 +57,6 @@ app.use('/*', (req, res) => {
 });
 app.use(errors());
 app.use(errorHandler);
-
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });

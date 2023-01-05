@@ -1,5 +1,6 @@
 const Cards = require('../models/card');
 const NotFound = require('../errors/NotFound');
+const ForbidddenError = require('../errors/ForbiddenError');
 const {
   OK,
   NOT_FOUND_ERROR,
@@ -45,12 +46,12 @@ module.exports.createCard = (req, res) => {
 // Delete удаление
 module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndDelete(req.params.cardId, { new: true })
-    .orFail(new NotFound())
+    // .orFail(new NotFound())
     .then((card) => {
       if (req.owner._id === req.user._id) {
         res.status(OK).send({ data: card });
       } else {
-        throw Error('Вы не являетесь владельцем данной карточки');
+        throw new ForbidddenError('Нет Доступа');
       }
     })
     .catch((err) => {

@@ -83,27 +83,6 @@ module.exports.getUser = (req, res) => {
 
 // POST /users — создаёт пользователя
 
-// module.exports.createUser2 = async (req, res) => {
-//   const { name, about, avatar, email, password } = req.body;
-//   if (!password) {
-//     throw Error('Необходимо ввести пароль');
-//   }
-
-//   bcrypt.hash(password, 10).then((hash) => {
-//     Users.create({ name, about, avatar, email, password: hash })
-//       .then((user) => res.status(CREATED).send({ data: user }))
-//       .catch((err) => {
-//         if (err.name === 'ValidationError') {
-//           res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-//         } else {
-//           res
-//             .status(INTERNAL_SERVER_ERROR)
-//             .send({ message: INTERNAL_SERVER_MESSAGE });
-//         }
-//       });
-//   });
-// }
-
 module.exports.createUser = async (req, res, next) => {
   try {
     const { name, about, avatar, email, password } = req.body;

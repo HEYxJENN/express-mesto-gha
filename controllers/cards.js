@@ -81,8 +81,7 @@ module.exports.likeCard = (req, res) => {
     .catch((err) => {
       if (err.message === 'Пользователь не найден') {
         res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
-      }
-      if (err.name === 'CastError') {
+      } else if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
       } else {
         res

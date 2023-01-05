@@ -9,6 +9,10 @@ const cardsRouter = require('./routes/cards');
 const auth = require('./middlewars/auth');
 const errorHandler = require('./middlewars/errorHandler');
 
+const URLregex =
+  /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/;
+// const EmailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
 const { PORT = 3000 } = process.env;
 
 const app = express();
@@ -44,7 +48,8 @@ app.post(
         .max(30)
         .default(
           'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png'
-        ),
+        )
+        .regex(URLregex),
     }),
   }),
   userRouter

@@ -103,7 +103,10 @@ module.exports.createUser = async (req, res, next) => {
   } catch (err) {
     if (err.name === 'ValidationError') {
       res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+    } else if (err.code === 11000) {
+      res.status(409).send({ message: 'email уже существует' });
     } else {
+      console.log(err);
       next(err);
     }
   }

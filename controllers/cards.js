@@ -43,15 +43,12 @@ module.exports.createCard = (req, res) => {
     });
 };
 
-// Delete удаление
-module.exports.deleteCard = (req, res) => {
-  Cards.findByIdAndDelete(req.params.cardId, { new: true })
-    .orFail(new NotFound('Пользователь не найден'))
+// Delete удаление 2222222
+module.exports.deleteCard2 = (req, res) => {
+  Cards.findOneAndDelete({ _id: req.params.cardId, owner: req.user._id })
+    .orFail(new NotFound('Card не найден'))
     .then((card) => {
-      console.log(req.owner._id);
-      console.log(req.user._id);
-      console.log(req.owner._id === req.user._id);
-      if (req.owner._id === req.user._id) {
+      if (card.owner.toString() === req.user._id) {
         res.status(OK).send({ data: card });
       } else {
         throw new ForbidddenError('Нет Доступа');
@@ -60,8 +57,7 @@ module.exports.deleteCard = (req, res) => {
     .catch((err) => {
       if (err.status === 404) {
         res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
-      }
-      if (err.name === 'CastError') {
+      } else if (err.name === 'CastError') {
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
       } else {
         res
@@ -69,6 +65,34 @@ module.exports.deleteCard = (req, res) => {
           .send({ message: INTERNAL_SERVER_MESSAGE });
       }
     });
+};
+
+// Delete удаление
+module.exports.deleteCard = async (req, res) => {
+  try {
+    const card = await Cards.findById(req.params.cardId);
+
+    if (!card) {
+      throw new NotFound('Card не найден');
+    }
+
+    if (card.owner.toString() !== req.user._id) {
+      throw new ForbidddenError('Нет Доступа');
+    }
+
+    await Cards.findByIdAndDelete(req.params.cardId);
+    res.status(OK).send({ data: card });
+  } catch (err) {
+    if (err.status === 404) {
+      res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
+    } else if (err.name === 'CastError') {
+      res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+    } else {
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: INTERNAL_SERVER_MESSAGE });
+    }
+  }
 };
 
 // likedel

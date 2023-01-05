@@ -22,7 +22,7 @@ router.patch(
     [Segments.BODY]: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string().min(2).max(30).regex(URLregex),
+      // avatar: Joi.string().min(2).max(30).regex(URLregex),
     }),
   }),
   updateUser
@@ -31,7 +31,7 @@ router.patch(
   '/users/me/avatar',
   celebrate({
     [Segments.BODY]: Joi.object().keys({
-      avatar: Joi.string().min(2).required(),
+      avatar: Joi.string().min(2).required().regex(URLregex),
     }),
   }),
   updateUseravatar

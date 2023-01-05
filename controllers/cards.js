@@ -46,8 +46,11 @@ module.exports.createCard = (req, res) => {
 // Delete удаление
 module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndDelete(req.params.cardId, { new: true })
-    // .orFail(new NotFound())
+    .orFail(new NotFound('Пользователь не найден'))
     .then((card) => {
+      console.log(req.owner._id);
+      console.log(req.user._id);
+      console.log(req.owner._id === req.user._id);
       if (req.owner._id === req.user._id) {
         res.status(OK).send({ data: card });
       } else {

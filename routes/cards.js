@@ -25,24 +25,8 @@ router.post(
 
 router.delete('/cards/:cardId', deleteCard);
 
-router.put(
-  '/cards/:cardId/likes',
-  // celebrate({
-  //   [Segments.BODY]: Joi.object().keys({
-  //     cardId: Joi.string().min(2).required(),
-  //   }),
-  // }),
-  likeCard
-);
+router.put('/cards/:cardId/likes', likeCard);
 
-router.delete(
-  '/cards/:cardId/likes',
-  // celebrate({
-  //   [Segments.BODY]: Joi.object().keys({
-  //     cardId: Joi.string().min(2).required(),
-  //   }),
-  // }),
-  dislikeCard
-);
+router.delete('/cards/:cardId/likes', dislikeCard);
 
 module.exports = router;

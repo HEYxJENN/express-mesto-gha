@@ -101,8 +101,6 @@ module.exports.createUser = async (req, res, next) => {
     user.password = undefined;
     res.status(CREATED).send({ data: user });
   } catch (err) {
-    console.log(err);
-
     if (err.name === 'ValidationError') {
       res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE, err });
     } else if (err.code === 11000) {

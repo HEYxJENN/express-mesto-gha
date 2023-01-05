@@ -10,6 +10,8 @@ const {
   login,
 } = require('../controllers/users');
 
+const URLregex = /^http/;
+
 router.get('/users/me', getMe);
 router.get('/users', getUsers);
 router.get('/users/:userId', getUser);
@@ -18,8 +20,9 @@ router.patch(
   '/users/me',
   celebrate({
     [Segments.BODY]: Joi.object().keys({
-      name: Joi.string().min(2).max(30).required(),
-      link: Joi.string().min(2).required(),
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().min(2).max(30).regex(URLregex),
     }),
   }),
   updateUser

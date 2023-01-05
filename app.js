@@ -9,10 +9,7 @@ const cardsRouter = require('./routes/cards');
 const auth = require('./middlewars/auth');
 const errorHandler = require('./middlewars/errorHandler');
 
-const URLregex =
-  /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/;
-// const EmailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-
+const URLregex = / ^https?: /;
 const { PORT = 3000 } = process.env;
 
 const app = express();
@@ -27,19 +24,18 @@ app.post(
   '/signin',
   celebrate({
     [Segments.BODY]: Joi.object().keys({
-      // name: Joi.string().min(2).max(30),
       email: Joi.string().required().email(),
       password: Joi.string().required().min(1),
-      // about: Joi.string().min(2).max(30),
     }),
   }),
   userRouter
 );
+
 app.post(
   '/signup',
   celebrate({
     [Segments.BODY]: Joi.object().keys({
-      name: Joi.string().min(2).max(30).default('Жак-Ив-Кусто'),
+      name: Joi.string().min(2).max(30).default('Жак-Ив Кусто'),
       email: Joi.string().required().email(),
       password: Joi.string().required().min(1),
       about: Joi.string().min(2).max(30).default('Исследователь'),
@@ -66,7 +62,6 @@ app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
 
-// 409 повторный мэйл
 // некорректный мейл ошибка 400
 // некорректный ссылка аватар ошибка 400
 // некорректный ссылка карточка ошибка 400

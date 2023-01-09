@@ -27,7 +27,6 @@ module.exports.getCards = (req, res) => {
 // Post создание карточки
 
 module.exports.createCard = (req, res) => {
-  // req.name.joi()
   const { name, link } = req.body;
   const ownerId = req.user._id;
   Cards.create({ name, link, owner: ownerId })
@@ -53,7 +52,8 @@ module.exports.deleteCard = async (req, res) => {
     if (card.owner.toString() !== req.user._id) {
       throw new ForbidddenError('Нет Доступа');
     }
-    await Cards.findByIdAndDelete(req.params.cardId);
+    // await Cards.findByIdAndDelete(req.params.cardId);
+    Cards.remove(card);
     res.status(OK).send({ data: card });
   } catch (err) {
     if (err.status === 403) {

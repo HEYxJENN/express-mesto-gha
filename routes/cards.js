@@ -23,10 +23,34 @@ router.post(
   createCard
 );
 
-router.delete('/cards/:cardId', deleteCard);
+router.delete(
+  '/cards/:cardId',
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      // name:
+    }),
+  }),
+  deleteCard
+);
 
-router.put('/cards/:cardId/likes', likeCard);
+router.put(
+  '/cards/:cardId/likes',
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      // name:
+    }),
+  }),
+  likeCard
+);
 
-router.delete('/cards/:cardId/likes', dislikeCard);
+router.delete(
+  '/cards/:cardId/likes',
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      // name:
+    }),
+  }),
+  dislikeCard
+);
 
 module.exports = router;

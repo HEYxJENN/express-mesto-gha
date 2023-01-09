@@ -9,6 +9,8 @@ const cardsRouter = require('./routes/cards');
 const auth = require('./middlewars/auth');
 const errorHandler = require('./middlewars/errorHandler');
 
+const { createUser, login } = require('./controllers/users');
+
 const URLregex = /^http/;
 const { PORT = 3000 } = process.env;
 
@@ -17,7 +19,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
 app.use(cors());
 app.use(cookieParser());
-app.use(bodyParser.json());
+express.json();
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post(
@@ -25,10 +27,10 @@ app.post(
   celebrate({
     [Segments.BODY]: Joi.object().keys({
       email: Joi.string().required().email(),
-      password: Joi.string().required().min(1),
+      password: Joi.string().required(),
     }),
   }),
-  userRouter
+  login
 );
 
 app.post(
@@ -37,7 +39,7 @@ app.post(
     [Segments.BODY]: Joi.object().keys({
       name: Joi.string().min(2).max(30).default('Жак-Ив Кусто'),
       email: Joi.string().required().email(),
-      password: Joi.string().required().min(1),
+      password: Joi.string().required(),
       about: Joi.string().min(2).max(30).default('Исследователь'),
       avatar: Joi.string()
         .min(2)
@@ -48,7 +50,7 @@ app.post(
         .regex(URLregex),
     }),
   }),
-  userRouter
+  createUser
 );
 app.use(auth);
 app.use('/', userRouter);
@@ -61,12 +63,3 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
-
-// некорректный мейл ошибка 400
-// некорректный ссылка аватар ошибка 400
-// некорректный ссылка карточка ошибка 400
-// нет поля мейл ошибка 400
-// нет поля мейл ошибка 401
-
-// удаление карточки работает но ошибка 500, а не успех 200?
-// удаление карточки другого пользователя 403 вместо 500

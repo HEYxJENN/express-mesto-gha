@@ -2,12 +2,10 @@ const router = require('express').Router();
 const { celebrate, Joi, Segments } = require('celebrate');
 const {
   getUser,
-  createUser,
   getUsers,
   updateUser,
   updateUseravatar,
   getMe,
-  login,
 } = require('../controllers/users');
 
 const URLregex = /^http/;
@@ -15,14 +13,12 @@ const URLregex = /^http/;
 router.get('/users/me', getMe);
 router.get('/users', getUsers);
 router.get('/users/:userId', getUser);
-// router.post('/users', createUser);
 router.patch(
   '/users/me',
   celebrate({
     [Segments.BODY]: Joi.object().keys({
-      name: Joi.string().min(2).max(30),
-      about: Joi.string().min(2).max(30),
-      // avatar: Joi.string().min(2).max(30).regex(URLregex),
+      name: Joi.string().min(2).max(30).required(),
+      about: Joi.string().min(2).max(30).required(),
     }),
   }),
   updateUser
@@ -36,7 +32,9 @@ router.patch(
   }),
   updateUseravatar
 );
-router.post('/signup', createUser);
-router.post('/signin', login);
+
+// router.post('/signup', createUser);
+// router.post('/signin', login);
+// в основном коде была ссылка на этот рут, а так приходится делать еще один импорт методов в апп
 
 module.exports = router;

@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 // const { isCelebrateError } = require('celebrate');
 const Users = require('../models/user');
-const ValidationError = require('../errors/ValidationError');
+// const ValidationError = require('../errors/ValidationError');
 const {
   CREATED,
   NOT_FOUND_ERROR,
@@ -86,9 +86,9 @@ module.exports.getUser = (req, res) => {
 module.exports.createUser = async (req, res, next) => {
   try {
     const { name, about, avatar, email, password } = req.body;
-    if (!password) {
-      throw new ValidationError('Необходимо ввести пароль');
-    }
+    // if (!password) {
+    //   throw new ValidationError('Необходимо ввести пароль');
+    // }
 
     const hash = await bcrypt.hash(password, 10);
     const user = await Users.create({

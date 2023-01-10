@@ -52,8 +52,8 @@ module.exports.deleteCard = async (req, res) => {
     if (card.owner.toString() !== req.user._id) {
       throw new ForbidddenError('Нет Доступа');
     }
-    // await Cards.findByIdAndDelete(req.params.cardId);
-    Cards.remove(card);
+    await Cards.findByIdAndDelete(req.params.cardId);
+    // Cards.remove(card);
     res.status(OK).send({ data: card });
   } catch (err) {
     if (err.status === 403) {

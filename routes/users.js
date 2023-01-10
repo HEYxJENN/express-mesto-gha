@@ -6,8 +6,6 @@ const {
   updateUser,
   updateUseravatar,
   getMe,
-  // createUser,
-  // login,
 } = require('../controllers/users');
 
 const URLregex =
@@ -35,9 +33,5 @@ router.patch(
   }),
   updateUseravatar
 );
-
-// router.post('/signup', createUser);
-// router.post('/signin', login);
-// в основном коде была ссылка на этот рут, а так приходится делать еще один импорт методов в апп
 
 module.exports = router;

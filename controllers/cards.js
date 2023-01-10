@@ -45,6 +45,7 @@ module.exports.createCard = (req, res) => {
 // Delete удаление
 module.exports.deleteCard = async (req, res) => {
   try {
+    console.log(req);
     const card = await Cards.findById(req.params.cardId);
     if (!card) {
       throw new NotFound('Card не найден');

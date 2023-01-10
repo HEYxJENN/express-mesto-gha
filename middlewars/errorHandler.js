@@ -1,11 +1,26 @@
+const {
+  NOT_FOUND_ERROR,
+  BAD_REQUEST_ERROR,
+  INTERNAL_SERVER_ERROR,
+  BAD_REQUEST_MESSAGE,
+  NOT_FOUND_MESSAGE,
+  INTERNAL_SERVER_MESSAGE,
+  Forbidden,
+  FORBIDDEN_MESSAGE,
+} = require('../constants/constants');
+
 module.exports = (err, req, res, next) => {
-  const { statusCode, message } = err;
-  // if (isCelebrateError(err)) {
-  //   res.status = statusCode.json(err);
-  // } else {
-  res
-    .status(statusCode)
-    .json({ message: statusCode === 500 ? 'Ошибка Сервера' : message });
-  // }
+  if (err.status === 404) {
+    res.status(NOT_FOUND_ERROR).json({ message: NOT_FOUND_MESSAGE });
+  } else if (err.status === 403) {
+    res.status(Forbidden).json({ message: FORBIDDEN_MESSAGE });
+  } else if (err.status === 400) {
+    res.status(BAD_REQUEST_ERROR).json({ message: BAD_REQUEST_MESSAGE });
+  } else {
+    res
+      .status(INTERNAL_SERVER_ERROR)
+      .json({ message: INTERNAL_SERVER_MESSAGE });
+  }
+
   next();
 };

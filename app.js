@@ -4,14 +4,16 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors, Segments } = require('celebrate');
+const { createUser, login } = require('./controllers/users');
 const userRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const auth = require('./middlewars/auth');
 const errorHandler = require('./middlewars/errorHandler');
+const NotFound = require('./errors/NotFound');
 
-const { createUser, login } = require('./controllers/users');
+const URLregex =
+  /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
 
-const URLregex = /^http/;
 const { PORT = 3000 } = process.env;
 
 const app = express();
@@ -19,7 +21,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
 app.use(cors());
 app.use(cookieParser());
-express.json();
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post(
@@ -37,10 +39,10 @@ app.post(
   '/signup',
   celebrate({
     [Segments.BODY]: Joi.object().keys({
-      name: Joi.string().min(2).max(30).default('Жак-Ив Кусто'),
+      name: Joi.string().min(2).max(30),
       email: Joi.string().required().email(),
       password: Joi.string().required(),
-      about: Joi.string().min(2).max(30).default('Исследователь'),
+      about: Joi.string().min(2).max(30),
       avatar: Joi.string()
         .min(2)
         .max(30)
@@ -55,8 +57,8 @@ app.post(
 app.use(auth);
 app.use('/', userRouter);
 app.use('/', cardsRouter);
-app.use('/*', (req, res) => {
-  res.status(404).json({ message: 'Данный ресурс не найден' });
+app.use('/*', () => {
+  throw new NotFound('Данный ресурс не найден');
 });
 app.use(errors());
 app.use(errorHandler);

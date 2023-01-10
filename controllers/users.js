@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 // const { isCelebrateError } = require('celebrate');
 const Users = require('../models/user');
-// const ValidationError = require('../errors/ValidationError');
+const ValidationError = require('../errors/ValidationError');
 const {
   CREATED,
   NOT_FOUND_ERROR,
@@ -12,6 +12,7 @@ const {
   NOT_FOUND_MESSAGE,
   INTERNAL_SERVER_MESSAGE,
 } = require('../constants/constants');
+const NotFound = require('../errors/NotFound');
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
@@ -62,21 +63,21 @@ module.exports.getUsers = (req, res) => {
 
 // GET /users/:userId - возвращает пользователя по _id
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   Users.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
+        // res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
+        next(new NotFound('Не найдено'));
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+        // res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+        next(new ValidationError('Ошибка валидации'));
       } else {
-        res
-          .status(INTERNAL_SERVER_ERROR)
-          .send({ message: INTERNAL_SERVER_MESSAGE });
+        next(err);
       }
     });
 };
@@ -86,9 +87,9 @@ module.exports.getUser = (req, res) => {
 module.exports.createUser = async (req, res, next) => {
   try {
     const { name, about, avatar, email, password } = req.body;
-    // if (!password) {
-    //   throw new ValidationError('Необходимо ввести пароль');
-    // }
+    if (!password) {
+      throw new ValidationError('Необходимо ввести пароль');
+    }
 
     const hash = await bcrypt.hash(password, 10);
     const user = await Users.create({

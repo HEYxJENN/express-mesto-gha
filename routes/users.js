@@ -6,9 +6,12 @@ const {
   updateUser,
   updateUseravatar,
   getMe,
+  // createUser,
+  // login,
 } = require('../controllers/users');
 
-const URLregex = /^http/;
+const URLregex =
+  /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
 
 router.get('/users/me', getMe);
 router.get('/users', getUsers);

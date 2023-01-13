@@ -10,11 +10,15 @@ const {
 } = require('../constants/constants');
 
 module.exports = (err, req, res, next) => {
+  console.log('BBB', err);
+
+  console.log('CCC', err.status);
+
   if (err.status === 404) {
     res.status(NOT_FOUND_ERROR).json({ message: NOT_FOUND_MESSAGE });
   } else if (err.status === 403) {
     res.status(Forbidden).json({ message: FORBIDDEN_MESSAGE });
-  } else if (err.status === 400) {
+  } else if (err.name === 'CastError') {
     res.status(BAD_REQUEST_ERROR).json({ message: BAD_REQUEST_MESSAGE });
   } else {
     res

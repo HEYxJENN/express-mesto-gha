@@ -27,8 +27,8 @@ router.post(
 router.delete(
   '/cards/:cardId',
   celebrate({
-    [Segments.BODY]: Joi.object().keys({
-      // _id: Joi.string().min(2).required(),
+    [Segments.PARAMS]: Joi.object().keys({
+      cardId: Joi.string().min(2).required(),
     }),
   }),
   deleteCard
@@ -37,8 +37,8 @@ router.delete(
 router.put(
   '/cards/:cardId/likes',
   celebrate({
-    [Segments.BODY]: Joi.object().keys({
-      // _id: Joi.string().min(2).required(),
+    [Segments.PARAMS]: Joi.object().keys({
+      cardId: Joi.string().min(2).required(),
     }),
   }),
   likeCard
@@ -47,8 +47,8 @@ router.put(
 router.delete(
   '/cards/:cardId/likes',
   celebrate({
-    [Segments.BODY]: Joi.object().keys({
-      // _id: Joi.string().min(2).required(),
+    [Segments.PARAMS]: Joi.object().keys({
+      cardId: Joi.string().min(2).required(),
     }),
   }),
   dislikeCard

@@ -14,6 +14,9 @@ const NOT_FOUND_ERROR = 404;
 const INTERNAL_SERVER_ERROR = 500;
 const Forbidden = 403;
 
+const URLregex =
+  /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
+
 module.exports = {
   OK,
   CREATED,
@@ -27,4 +30,5 @@ module.exports = {
   FORBIDDEN_MESSAGE,
   UNAUTHORIZED_ERROR,
   UNAUTHORIZED_MESSAGE,
+  URLregex,
 };

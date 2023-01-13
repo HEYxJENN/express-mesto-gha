@@ -2,11 +2,12 @@
 // сравнение токена и куки нужно для повышения уровня безопасности
 // я оставил только куку, но по мнению нескольких моих знакомых senior разработчиков - такая практика хуже.
 // так же на будущее для себя хотел бы оставить закомментированный код
-
 const jwt = require('jsonwebtoken');
+const Unauthorized = require('../errors/Unauthorized');
 
-const handleAuthError = (res) => {
-  res.status(401).send({ message: 'Необходима авторизация' });
+const handleAuthError = () => {
+  // res.status(401).send({ message: 'Необходима авторизация' });
+  throw new Unauthorized();
 };
 
 const extractBearerToken = (header) => header.replace('Bearer ', '');

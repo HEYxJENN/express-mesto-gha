@@ -14,7 +14,7 @@ const {
 } = require('../constants/constants');
 const NotFound = require('../errors/NotFound');
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return Users.findUserByCredentials(email, password)
@@ -35,7 +35,8 @@ module.exports.login = (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
+      // res.status(401).send({ message: err.message });
+      next(err);
     });
 };
 
@@ -43,7 +44,8 @@ module.exports.getMe = (req, res, next) => {
   Users.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
+        // res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
+        throw new NotFound();
       }
       res.send({ data: user });
     })
@@ -51,13 +53,14 @@ module.exports.getMe = (req, res, next) => {
 };
 
 // GET /users — возвращает всех пользователей
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   Users.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() =>
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: INTERNAL_SERVER_MESSAGE })
+    .catch((err) =>
+      // res
+      //   .status(INTERNAL_SERVER_ERROR)
+      //   .send({ message: INTERNAL_SERVER_MESSAGE })
+      next(err)
     );
 };
 
@@ -73,13 +76,14 @@ module.exports.getUser = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        // res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-        next(new ValidationError('Ошибка валидации'));
-      } else {
-        next(err);
-      }
+      // if (err.name === 'CastError') {
+      //   // res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      //   next(new ValidationError('Ошибка валидации'));
+      // } else {
+      next(err);
     });
+  //   }
+  // });
 };
 
 // POST /users — создаёт пользователя
@@ -102,20 +106,20 @@ module.exports.createUser = async (req, res, next) => {
     user.password = undefined;
     res.status(CREATED).send({ data: user });
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE, err });
-    } else if (err.code === 11000) {
-      res.status(409).send({ message: 'email уже существует' });
-    } else {
-      next(err);
-    }
+    // if (err.name === 'ValidationError') {
+    //   res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE, err });
+    // } else if (err.code === 11000) {
+    //   res.status(409).send({ message: 'email уже существует' });
+    // } else {
+    next(err);
+    // }
   }
 };
 // };
 
 // апдейтЮзер
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
   Users.findByIdAndUpdate(
     req.user._id,
@@ -131,19 +135,21 @@ module.exports.updateUser = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      } else {
-        res
-          .status(INTERNAL_SERVER_ERROR)
-          .send({ message: INTERNAL_SERVER_MESSAGE });
-      }
+      //   if (err.name === 'ValidationError') {
+      //     res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      //   } else {
+      //     res
+      //       .status(INTERNAL_SERVER_ERROR)
+      //       .send({ message: INTERNAL_SERVER_MESSAGE });
+      //   }
+      // });
+      next(err);
     });
 };
 
 // апдейтАватар
 
-module.exports.updateUseravatar = (req, res) => {
+module.exports.updateUseravatar = (req, res, next) => {
   const { avatar } = req.body;
   Users.findByIdAndUpdate(
     req.user._id,
@@ -152,18 +158,20 @@ module.exports.updateUseravatar = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
-        return;
+        // res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
+        // return;
+        throw new NotFound();
       }
       // res.send({ data: user });
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      }
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: INTERNAL_SERVER_MESSAGE });
+      // if (err.name === 'ValidationError') {
+      //   res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
+      // }
+      // res
+      //   .status(INTERNAL_SERVER_ERROR)
+      //   .send({ message: INTERNAL_SERVER_MESSAGE });
+      next(err);
     });
 };

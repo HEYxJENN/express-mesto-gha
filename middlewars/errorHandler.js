@@ -7,13 +7,17 @@ const {
   INTERNAL_SERVER_MESSAGE,
   Forbidden,
   FORBIDDEN_MESSAGE,
+  UNAUTHORIZED_ERROR,
+  UNAUTHORIZED_MESSAGE,
 } = require('../constants/constants');
 
 module.exports = (err, req, res, next) => {
   console.log('BBB', err);
-
   console.log('CCC', err.status);
 
+  if (err.status === 401) {
+    res.status(UNAUTHORIZED_ERROR).json({ message: UNAUTHORIZED_MESSAGE });
+  }
   if (err.status === 404) {
     res.status(NOT_FOUND_ERROR).json({ message: NOT_FOUND_MESSAGE });
   } else if (err.status === 403) {

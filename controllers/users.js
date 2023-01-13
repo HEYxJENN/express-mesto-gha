@@ -1,17 +1,8 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-// const { isCelebrateError } = require('celebrate');
 const Users = require('../models/user');
 const ValidationError = require('../errors/ValidationError');
-const {
-  CREATED,
-  NOT_FOUND_ERROR,
-  BAD_REQUEST_ERROR,
-  INTERNAL_SERVER_ERROR,
-  BAD_REQUEST_MESSAGE,
-  NOT_FOUND_MESSAGE,
-  INTERNAL_SERVER_MESSAGE,
-} = require('../constants/constants');
+const { CREATED } = require('../constants/constants');
 const NotFound = require('../errors/NotFound');
 
 module.exports.login = (req, res, next) => {
@@ -35,7 +26,6 @@ module.exports.login = (req, res, next) => {
       });
     })
     .catch((err) => {
-      // res.status(401).send({ message: err.message });
       next(err);
     });
 };
@@ -44,7 +34,6 @@ module.exports.getMe = (req, res, next) => {
   Users.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        // res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
         throw new NotFound();
       }
       res.send({ data: user });
@@ -56,12 +45,7 @@ module.exports.getMe = (req, res, next) => {
 module.exports.getUsers = (req, res, next) => {
   Users.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) =>
-      // res
-      //   .status(INTERNAL_SERVER_ERROR)
-      //   .send({ message: INTERNAL_SERVER_MESSAGE })
-      next(err)
-    );
+    .catch((err) => next(err));
 };
 
 // GET /users/:userId - возвращает пользователя по _id
@@ -70,20 +54,13 @@ module.exports.getUser = (req, res, next) => {
   Users.findById(req.params.userId)
     .then((user) => {
       if (!user) {
-        // res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
         next(new NotFound('Не найдено'));
       }
       res.send({ data: user });
     })
     .catch((err) => {
-      // if (err.name === 'CastError') {
-      //   // res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      //   next(new ValidationError('Ошибка валидации'));
-      // } else {
       next(err);
     });
-  //   }
-  // });
 };
 
 // POST /users — создаёт пользователя
@@ -106,16 +83,13 @@ module.exports.createUser = async (req, res, next) => {
     user.password = undefined;
     res.status(CREATED).send({ data: user });
   } catch (err) {
-    // if (err.name === 'ValidationError') {
-    //   res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE, err });
-    // } else if (err.code === 11000) {
-    //   res.status(409).send({ message: 'email уже существует' });
-    // } else {
-    next(err);
-    // }
+    if (err.code === 11000) {
+      res.status(409).send({ message: 'email уже существует' });
+    } else {
+      next(err);
+    }
   }
 };
-// };
 
 // апдейтЮзер
 
@@ -128,21 +102,11 @@ module.exports.updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
-        return;
+        throw new NotFound();
       }
-      // res.send({ data: user });
       res.send({ data: user });
     })
     .catch((err) => {
-      //   if (err.name === 'ValidationError') {
-      //     res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      //   } else {
-      //     res
-      //       .status(INTERNAL_SERVER_ERROR)
-      //       .send({ message: INTERNAL_SERVER_MESSAGE });
-      //   }
-      // });
       next(err);
     });
 };
@@ -158,20 +122,11 @@ module.exports.updateUseravatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        // res.status(NOT_FOUND_ERROR).send({ message: NOT_FOUND_MESSAGE });
-        // return;
         throw new NotFound();
       }
-      // res.send({ data: user });
       res.send({ data: user });
     })
     .catch((err) => {
-      // if (err.name === 'ValidationError') {
-      //   res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
-      // }
-      // res
-      //   .status(INTERNAL_SERVER_ERROR)
-      //   .send({ message: INTERNAL_SERVER_MESSAGE });
       next(err);
     });
 };

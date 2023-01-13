@@ -15,11 +15,11 @@ router.get('/users/me', getMe);
 router.get('/users', getUsers);
 router.get(
   '/users/:userId',
-  // celebrate({
-  //   [Segments.BODY]: Joi.object().keys({
-  //     userId: Joi.string().min(2).required(),
-  //   }),
-  // }),
+  celebrate({
+    [Segments.PARAMS]: Joi.object().keys({
+      userId: Joi.string().min(24).required(),
+    }),
+  }),
   getUser
 );
 router.patch(

@@ -6,32 +6,33 @@ const jwt = require('jsonwebtoken');
 const Unauthorized = require('../errors/Unauthorized');
 
 const handleAuthError = () => {
-  // res.status(401).send({ message: 'Необходима авторизация' });
   throw new Unauthorized();
 };
 
-const extractBearerToken = (header) => header.replace('Bearer ', '');
+// const extractBearerToken = (header) => header.replace('Bearer ', '');
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
+  //   const { authorization } = req.headers;
+
   // кука из реквеста
   const { secureCookie } = req.cookies;
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    handleAuthError(res);
-    return;
-  }
+  // if (!authorization || !authorization.startsWith('Bearer ')) {
+  //   handleAuthError(res);
+  //   return;
+  // }
 
-  const token = extractBearerToken(authorization);
+  // const token = extractBearerToken(authorization);
 
   // сравниваем токены
-  if (secureCookie !== token) {
-    handleAuthError(res);
-    return;
-  }
+  // if (secureCookie !== token) {
+  //   handleAuthError(res);
+  //   return;
+  // }
 
   let payload;
   try {
-    payload = jwt.verify(token, 'super-strong-secret');
+    // payload = jwt.verify(token, 'super-strong-secret');
+    payload = jwt.verify(secureCookie, 'super-strong-secret');
   } catch (err) {
     handleAuthError(res);
     return;

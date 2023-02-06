@@ -1,7 +1,9 @@
+// тут так же для нагляднности хотел бы оставить себе вариант с токеном в закомментированном виде
+
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 const Users = require('../models/user');
-const ValidationError = require('../errors/ValidationError');
+// const ValidationError = require('../errors/ValidationError');
 const { CREATED } = require('../constants/constants');
 const NotFound = require('../errors/NotFound');
 
@@ -10,20 +12,23 @@ module.exports.login = (req, res, next) => {
 
   return Users.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
-        expiresIn: '7d',
-      });
+      // const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
+      //   expiresIn: '7d',
+      // });
 
-      res.cookie('secureCookie', token, {
-        secure: false,
-        httpOnly: true,
-        expires: new Date(Date.now() + 9000000),
-        sameSite: 'Lax',
-      });
+      res.cookie(
+        'secureCookie',
+        // token,
+        user._id,
+        {
+          secure: false,
+          httpOnly: true,
+          expires: new Date(Date.now() + 9000000),
+          sameSite: 'Lax',
+        }
+      );
 
-      res.send({
-        token,
-      });
+      res.send({ user });
     })
     .catch((err) => {
       next(err);
@@ -34,7 +39,7 @@ module.exports.getMe = (req, res, next) => {
   Users.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new NotFound();
+        throw new NotFound('Пользователь не найден');
       }
       res.send({ data: user });
     })
@@ -68,9 +73,9 @@ module.exports.getUser = (req, res, next) => {
 module.exports.createUser = async (req, res, next) => {
   try {
     const { name, about, avatar, email, password } = req.body;
-    if (!password) {
-      throw new ValidationError('Необходимо ввести пароль');
-    }
+    // if (!password) {
+    //   throw new ValidationError('Необходимо ввести пароль');
+    // }
 
     const hash = await bcrypt.hash(password, 10);
     const user = await Users.create({
@@ -102,7 +107,7 @@ module.exports.updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFound();
+        throw new NotFound('Пользователь не найден');
       }
       res.send({ data: user });
     })
@@ -122,7 +127,7 @@ module.exports.updateUseravatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFound();
+        throw new NotFound('Пользователь не найден');
       }
       res.send({ data: user });
     })

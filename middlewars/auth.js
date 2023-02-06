@@ -1,12 +1,13 @@
 // полагаю, что в комментариях к данному коду вы не совсем правы,
 // сравнение токена и куки нужно для повышения уровня безопасности
 // я оставил только куку, но по мнению нескольких моих знакомых senior разработчиков - такая практика хуже.
-// так же на будущее для себя хотел бы оставить закомментированный код
+// так же на будущее для себя хотел бы оставить закомментированный код, как пример best practice
 const jwt = require('jsonwebtoken');
 const Unauthorized = require('../errors/Unauthorized');
 
-const handleAuthError = () => {
-  throw new Unauthorized();
+const handleAuthError = (req, res, next) => {
+  // throw
+  next(new Unauthorized());
 };
 
 // const extractBearerToken = (header) => header.replace('Bearer ', '');
@@ -15,7 +16,14 @@ module.exports = (req, res, next) => {
   //   const { authorization } = req.headers;
 
   // кука из реквеста
+
   const { secureCookie } = req.cookies;
+
+  if (!secureCookie) {
+    handleAuthError(res);
+    return;
+  }
+
   // if (!authorization || !authorization.startsWith('Bearer ')) {
   //   handleAuthError(res);
   //   return;

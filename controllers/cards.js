@@ -67,7 +67,7 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
-    .orFail(new NotFound('Пользователь не найден'))
+    .orFail(new NotFound('Карточка не найдена'))
     .then((card) => res.status(OK).send({ data: card }))
     .catch((err) => {
       console.log('AAA', err);

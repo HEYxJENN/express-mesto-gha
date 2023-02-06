@@ -52,11 +52,13 @@ app.post(
   }),
   createUser
 );
+
 app.use(auth);
 app.use('/', userRouter);
 app.use('/', cardsRouter);
-app.use('/*', () => {
-  throw new NotFound('Данный ресурс не найден');
+app.use('/*', (req, res, next) => {
+  // throw
+  next(new NotFound('Данный ресурс не найден'));
 });
 app.use(errors());
 app.use(errorHandler);

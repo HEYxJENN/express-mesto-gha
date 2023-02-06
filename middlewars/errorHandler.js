@@ -15,6 +15,12 @@ module.exports = (err, req, res, next) => {
   console.log('BBB', err);
   console.log('CCC', err.status);
 
+  // const { status, message } = err;
+
+  // const stC = statusCode.json(err);
+  // console.log('DDD', status);
+  // console.log('EEE', message);
+
   if (err.status === 401) {
     res.status(UNAUTHORIZED_ERROR).json({ message: UNAUTHORIZED_MESSAGE });
   }

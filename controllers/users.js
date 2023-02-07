@@ -1,7 +1,7 @@
 // тут так же для нагляднности хотел бы оставить себе вариант с токеном в закомментированном виде
 
 const bcrypt = require('bcrypt');
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const Users = require('../models/user');
 // const ValidationError = require('../errors/ValidationError');
 const { CREATED } = require('../constants/constants');
@@ -12,9 +12,9 @@ module.exports.login = (req, res, next) => {
 
   return Users.findUserByCredentials(email, password)
     .then((user) => {
-      // const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
-      //   expiresIn: '7d',
-      // });
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', {
+        expiresIn: '7d',
+      });
 
       res.cookie(
         'secureCookie',
@@ -28,7 +28,10 @@ module.exports.login = (req, res, next) => {
         }
       );
 
-      res.send({ user });
+      res.send({
+        token,
+        // user
+      });
     })
     .catch((err) => {
       next(err);

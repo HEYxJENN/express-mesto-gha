@@ -5,22 +5,23 @@
 const jwt = require('jsonwebtoken');
 const Unauthorized = require('../errors/Unauthorized');
 
-const handleAuthError = (req, res, next) => {
-  // throw
+const handleAuthError = (res, next) => {
+  // console.log('WRONG3', res);
   next(new Unauthorized());
+  // throw new Unauthorized();
 };
 
 // const extractBearerToken = (header) => header.replace('Bearer ', '');
 
 module.exports = (req, res, next) => {
   //   const { authorization } = req.headers;
-
   // кука из реквеста
 
   const { secureCookie } = req.cookies;
 
   if (!secureCookie) {
-    handleAuthError(res);
+    console.log('WRONG1');
+    handleAuthError(res, next);
     return;
   }
 
@@ -43,6 +44,7 @@ module.exports = (req, res, next) => {
     payload = jwt.verify(secureCookie, 'super-strong-secret');
   } catch (err) {
     handleAuthError(res);
+    console.log('WRONG2');
     return;
   }
   req.user = payload; // записываем пейлоуд в объект запроса

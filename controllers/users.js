@@ -110,7 +110,8 @@ module.exports.updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFound('Пользователь не найден');
+        // throw new NotFound('Пользователь не найден');
+        next(new NotFound('Пользователь не найден'));
       }
       res.send({ data: user });
     })

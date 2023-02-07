@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
 const Unauthorized = require('../errors/Unauthorized');
 
 const handleAuthError = (res, next) => {
-  // console.log('WRONG3', res);
   next(new Unauthorized());
   // throw new Unauthorized();
 };
@@ -20,7 +19,6 @@ module.exports = (req, res, next) => {
   const { secureCookie } = req.cookies;
 
   if (!secureCookie) {
-    console.log('WRONG1');
     handleAuthError(res, next);
     return;
   }

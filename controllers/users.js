@@ -18,8 +18,8 @@ module.exports.login = (req, res, next) => {
 
       res.cookie(
         'secureCookie',
-        // token,
-        user._id,
+        token,
+        // user._id,
         {
           secure: false,
           httpOnly: true,

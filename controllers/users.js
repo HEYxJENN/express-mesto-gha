@@ -15,21 +15,21 @@ module.exports.login = (req, res, next) => {
         expiresIn: '7d',
       });
 
-      res.cookie(
-        'secureCookie',
-        token,
-        // user._id,
-        {
-          secure: false,
-          httpOnly: true,
-          expires: new Date(Date.now() + 9000000),
-          sameSite: 'Lax',
-        }
-      );
+      // res.cookie(
+      //   'secureCookie',
+      // token,
+      // user._id,
+      //   {
+      //     secure: false,
+      //     httpOnly: true,
+      //     expires: new Date(Date.now() + 9000000),
+      //     sameSite: 'Lax',
+      //   }
+      // );
 
       res.send({
         token,
-        // user
+        // user,
       });
     })
     .catch((err) => {

@@ -12,7 +12,7 @@ const handleAuthError = (res, next) => {
 // const extractBearerToken = (header) => header.replace('Bearer ', '');
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
+  // const { authorization } = req.headers;
   // кука из реквеста
 
   const { secureCookie } = req.cookies;
@@ -22,10 +22,10 @@ module.exports = (req, res, next) => {
     return;
   }
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    handleAuthError(res);
-    return;
-  }
+  // if (!authorization || !authorization.startsWith('Bearer ')) {
+  //   handleAuthError(res);
+  //   return;
+  // }
 
   // const token = extractBearerToken(authorization);
 

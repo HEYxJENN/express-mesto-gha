@@ -1,5 +1,4 @@
 // тут так же для нагляднности хотел бы оставить себе вариант с токеном в закомментированном виде
-
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Users = require('../models/user');
@@ -38,15 +37,19 @@ module.exports.login = (req, res, next) => {
     });
 };
 
+// castError
 module.exports.getMe = (req, res, next) => {
   Users.findById(req.user._id)
     .then((user) => {
       if (!user) {
         throw new NotFound('Пользователь не найден');
+      } else {
+        res.send({ data: user });
       }
-      res.send({ data: user });
     })
-    .catch(next);
+    .catch(() => {
+      next();
+    });
 };
 
 // GET /users — возвращает всех пользователей

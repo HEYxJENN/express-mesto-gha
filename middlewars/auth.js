@@ -7,10 +7,9 @@ const Unauthorized = require('../errors/Unauthorized');
 
 const handleAuthError = (res, next) => {
   next(new Unauthorized());
-  // throw new Unauthorized();
 };
 
-const extractBearerToken = (header) => header.replace('Bearer ', '');
+// const extractBearerToken = (header) => header.replace('Bearer ', '');
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
@@ -28,17 +27,17 @@ module.exports = (req, res, next) => {
     return;
   }
 
-  const token = extractBearerToken(authorization);
+  // const token = extractBearerToken(authorization);
 
   // сравниваем токены
-  if (secureCookie !== token) {
-    handleAuthError(res);
-    return;
-  }
+  // if (secureCookie !== token) {
+  //   handleAuthError(res);
+  //   return;
+  // }
 
   let payload;
   try {
-    payload = jwt.verify(token, 'super-strong-secret');
+    // payload = jwt.verify(token, 'super-strong-secret');
     payload = jwt.verify(secureCookie, 'super-strong-secret');
   } catch (err) {
     handleAuthError(res);

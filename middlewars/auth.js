@@ -10,25 +10,25 @@ const handleAuthError = (res, next) => {
   next(new Unauthorized());
 };
 
-const extractBearerToken = (header) => header.replace('Bearer ', '');
+// const extractBearerToken = (header) => header.replace('Bearer ', '');
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
+  // const { authorization } = req.headers;
   // кука из реквеста
 
-  // const { secureCookie } = req.cookies;
+  const { secureCookie } = req.cookies;
 
-  // if (!secureCookie) {
-  //   handleAuthError(res, next);
-  //   return;
-  // }
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
+  if (!secureCookie) {
     handleAuthError(res, next);
     return;
   }
 
-  const token = extractBearerToken(authorization);
+  // if (!authorization || !authorization.startsWith('Bearer ')) {
+  //   handleAuthError(res, next);
+  //   return;
+  // }
+
+  // const token = extractBearerToken(authorization);
 
   // сравниваем токены
   // if (secureCookie !== token) {
@@ -38,8 +38,8 @@ module.exports = (req, res, next) => {
 
   let payload;
   try {
-    payload = jwt.verify(token, 'super-strong-secret');
-    // payload = jwt.verify(secureCookie, 'super-strong-secret');
+    // payload = jwt.verify(token, 'super-strong-secret');
+    payload = jwt.verify(secureCookie, 'super-strong-secret');
   } catch (err) {
     handleAuthError(res, next);
     console.log('WRONG2');

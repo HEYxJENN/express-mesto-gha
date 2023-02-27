@@ -6,41 +6,42 @@ const jwt = require('jsonwebtoken');
 const Unauthorized = require('../errors/Unauthorized');
 
 const handleAuthError = (res, next) => {
+  console.log('handleAuthErr');
   next(new Unauthorized());
 };
 
-const extractBearerToken = (header) => header.replace('Bearer ', '');
+// const extractBearerToken = (header) => header.replace('Bearer ', '');
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
+  // const { authorization } = req.headers;
   // кука из реквеста
 
-  // const { secureCookie } = req.cookies;
+  const { secureCookie } = req.cookies;
 
-  // if (!secureCookie) {
+  if (!secureCookie) {
+    handleAuthError(res, next);
+    return;
+  }
+
+  // if (!authorization || !authorization.startsWith('Bearer ')) {
   //   handleAuthError(res, next);
   //   return;
   // }
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    handleAuthError(res);
-    return;
-  }
-
-  const token = extractBearerToken(authorization);
+  // const token = extractBearerToken(authorization);
 
   // сравниваем токены
   // if (secureCookie !== token) {
-  //   handleAuthError(res);
+  //   handleAuthError(res,next);
   //   return;
   // }
 
   let payload;
   try {
-    payload = jwt.verify(token, 'super-strong-secret');
-    // payload = jwt.verify(secureCookie, 'super-strong-secret');
+    // payload = jwt.verify(token, 'super-strong-secret');
+    payload = jwt.verify(secureCookie, 'super-strong-secret');
   } catch (err) {
-    handleAuthError(res);
+    handleAuthError(res, next);
     console.log('WRONG2');
     return;
   }

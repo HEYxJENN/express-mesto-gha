@@ -58,6 +58,7 @@ app.use('/', userRouter);
 app.use('/', cardsRouter);
 app.use('/*', (req, res, next) => {
   // throw
+  console.log('WRoNgWaYAAAAAAAA');
   next(new NotFound('Данный ресурс не найден'));
 });
 app.use(errors());

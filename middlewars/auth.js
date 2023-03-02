@@ -7,7 +7,7 @@ const Unauthorized = require('../errors/Unauthorized');
 
 const handleAuthError = (res, next) => {
   console.log('handleAuthErr');
-  next(new Unauthorized());
+  next(new Unauthorized('Требуется авторизация'));
 };
 
 const extractBearerToken = (header) => header.replace('Bearer ', '');

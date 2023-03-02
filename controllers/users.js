@@ -70,7 +70,12 @@ module.exports.getUser = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
+      // console.log('AAAAAAAAA', err);
+      // if (err.name === 'CastError') {
+      //   console.log('невалидный ID');
+      // } else {
       next(err);
+      // }
     });
 };
 

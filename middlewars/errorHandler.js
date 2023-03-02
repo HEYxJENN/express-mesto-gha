@@ -36,8 +36,12 @@
 module.exports = (err, req, res, next) => {
   console.log('BBB', err);
   console.log('CCC', err.status);
+  console.log('DDDD', err.message);
 
-  const { statusCode, message } = err;
+  const statusCode = err.status;
+  const { message } = err;
+
+  console.log(statusCode, message);
 
   res
     .status(statusCode)

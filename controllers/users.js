@@ -3,8 +3,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Users = require('../models/user');
 const ValidationError = require('../errors/ValidationError');
-const { CREATED } = require('../constants/constants');
 const NotFound = require('../errors/NotFound');
+const Conflict = require('../errors/Conflict');
+const { CREATED } = require('../constants/constants');
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -66,6 +67,7 @@ module.exports.getUser = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new NotFound('Не найдено'));
+        return;
       }
       res.send({ data: user });
     })
@@ -95,7 +97,8 @@ module.exports.createUser = async (req, res, next) => {
     res.status(CREATED).send({ data: user });
   } catch (err) {
     if (err.code === 11000) {
-      res.status(409).send({ message: 'email уже существует' });
+      // res.status(409).send({ message: 'email уже существует' });
+      next(new Conflict('email уже существует'));
     } else if (err.name === 'ValidationError') {
       next(new ValidationError('Ошибка валидации'));
     } else {
@@ -116,11 +119,16 @@ module.exports.updateUser = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new NotFound('Пользователь не найден'));
+        return;
       }
       res.send({ data: user });
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'ValidationError') {
+        next(new ValidationError('Ошибка валидации'));
+      } else {
+        next(err);
+      }
     });
 };
 

@@ -5,27 +5,26 @@ const ValidationError = require('../errors/ValidationError');
 const {
   OK,
   BAD_REQUEST_ERROR,
-  INTERNAL_SERVER_ERROR,
   BAD_REQUEST_MESSAGE,
-  INTERNAL_SERVER_MESSAGE,
 } = require('../constants/constants');
 
 // Get получаем все карты
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Cards.find({})
     .populate(['owner', 'likes'])
     .then((cards) => res.status(OK).send({ data: cards }))
-    .catch(() =>
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: INTERNAL_SERVER_MESSAGE })
+    .catch(
+      (err) => next(err)
+      // res
+      //   .status(INTERNAL_SERVER_ERROR)
+      //   .send({ message: INTERNAL_SERVER_MESSAGE })
     );
 };
 
 // Post создание карточки
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
   Cards.create({ name, link, owner: ownerId })
@@ -34,9 +33,10 @@ module.exports.createCard = (req, res) => {
       if (err.name === 'ValidationError')
         res.status(BAD_REQUEST_ERROR).send({ message: BAD_REQUEST_MESSAGE });
       else {
-        res.status(INTERNAL_SERVER_ERROR).send({
-          message: INTERNAL_SERVER_MESSAGE,
-        });
+        // res.status(INTERNAL_SERVER_ERROR).send({
+        //   message: INTERNAL_SERVER_MESSAGE,
+        // });
+        next(err);
       }
     });
 };
@@ -53,7 +53,6 @@ module.exports.deleteCard = async (req, res, next) => {
       throw new ForbidddenError('Нет Доступа');
     }
     await Cards.findByIdAndDelete(req.params.cardId);
-    // Cards.remove(card);
     res.status(OK).send({ data: card });
   } catch (err) {
     if (err.name === 'CastError') {

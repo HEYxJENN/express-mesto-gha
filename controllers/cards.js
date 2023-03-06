@@ -1,6 +1,7 @@
 const Cards = require('../models/card');
 const NotFound = require('../errors/NotFound');
 const ForbidddenError = require('../errors/ForbiddenError');
+const ValidationError = require('../errors/ValidationError');
 const {
   OK,
   BAD_REQUEST_ERROR,
@@ -55,7 +56,11 @@ module.exports.deleteCard = async (req, res, next) => {
     // Cards.remove(card);
     res.status(OK).send({ data: card });
   } catch (err) {
-    next(err);
+    if (err.name === 'CastError') {
+      next(new ValidationError('Невалидный id'));
+    } else {
+      next(err);
+    }
   }
 };
 
@@ -70,8 +75,11 @@ module.exports.likeCard = (req, res, next) => {
     .orFail(new NotFound('Карточка не найдена'))
     .then((card) => res.status(OK).send({ data: card }))
     .catch((err) => {
-      console.log('AAA', err);
-      next(err);
+      if (err.name === 'CastError') {
+        next(new ValidationError('Невалидный id'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -84,6 +92,10 @@ module.exports.dislikeCard = (req, res, next) => {
     .orFail(new NotFound('Пользователь не найден'))
     .then((card) => res.status(OK).send({ data: card }))
     .catch((err) => {
-      next(err);
+      if (err.name === 'CastError') {
+        next(new ValidationError('Невалидный id'));
+      } else {
+        next(err);
+      }
     });
 };

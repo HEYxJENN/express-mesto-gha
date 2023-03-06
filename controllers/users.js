@@ -2,7 +2,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Users = require('../models/user');
-// const ValidationError = require('../errors/ValidationError');
+const ValidationError = require('../errors/ValidationError');
 const { CREATED } = require('../constants/constants');
 const NotFound = require('../errors/NotFound');
 
@@ -70,12 +70,11 @@ module.exports.getUser = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      // console.log('AAAAAAAAA', err);
-      // if (err.name === 'CastError') {
-      //   console.log('невалидный ID');
-      // } else {
-      next(err);
-      // }
+      if (err.name === 'CastError') {
+        next(new ValidationError('Невалидный id'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -84,10 +83,6 @@ module.exports.getUser = (req, res, next) => {
 module.exports.createUser = async (req, res, next) => {
   try {
     const { name, about, avatar, email, password } = req.body;
-    // if (!password) {
-    //   throw new ValidationError('Необходимо ввести пароль');
-    // }
-
     const hash = await bcrypt.hash(password, 10);
     const user = await Users.create({
       name,
@@ -101,6 +96,8 @@ module.exports.createUser = async (req, res, next) => {
   } catch (err) {
     if (err.code === 11000) {
       res.status(409).send({ message: 'email уже существует' });
+    } else if (err.name === 'ValidationError') {
+      next(new ValidationError('Ошибка валидации'));
     } else {
       next(err);
     }
@@ -118,7 +115,6 @@ module.exports.updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        // throw new NotFound('Пользователь не найден');
         next(new NotFound('Пользователь не найден'));
       }
       res.send({ data: user });
@@ -144,6 +140,10 @@ module.exports.updateUseravatar = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'ValidationError') {
+        next(new ValidationError('Ошибка валидации'));
+      } else {
+        next(err);
+      }
     });
 };
